@@ -28,19 +28,36 @@ app.configure(function()
 app.configure( 'development', function () { app.use( express.errorHandler( { dumpExceptions: true, showStack: true } ) ); });
 app.configure( 'production',  function () { app.use( express.errorHandler() ); } );
 
+function digestapp(req, res,next) {
+    passport.authenticate('digest', { session: true }),
+  function (req, res) {
+      console.log('this function is not expected to be called as it needs to be redirested to passprt digest strategy function');
+      res.json(req.user);
+  };    
+    //req.login();
+    console.log('digesttest being called');
+    if (req.isAuthenticated()) {
+        console.log('user is authenticated');       
+        next();
+    } else {
+        console.log('user is not authenticated');
+        res.redirect("/login");
+    }
+//  res.end('https://www.facebook.com/dialog/oauth?' + params);
+}
 // #############################################################################################################
 
 // fake database
 var users = [
-    { id: 1, username: 'John', password: 'pass',     domain: "http://localhost:2563/", email: 'john@example.com' }
-  , { id: 2, username: 'joe',  password: 'birthday', domain: "www.domain.com",         email: 'joe@example.com' }
+    { id: 1, username: 'John', password: 'pass',     domain: "http://localhost:8180/", email: 'john@example.com' }
+  , { id: 2, username: 'joe',  password: 'birthday', domain: "http://localhost:8180/", email: 'joe@example.com' }
 ];
 
 // #############################################################################################################
 
 function findByUsername( username, fn )
 {
-    for (var i = 0, len = users.length; i &lt; len; i++)
+    for (var i = 0, len = users.length; i < len; i++)
     {
         var user = users[i];
         if (user.username === username) return fn( null, user );
@@ -62,38 +79,46 @@ function findByUsername( username, fn )
 passport.use
 (
   new DigestStrategy(
-    { qop: 'auth', realm: 'your.realm' },
-    function( username, done )
-    {
+    { qop: 'auth' },
+    function (username, done) {
+        console.log('Findbyusername being called');
         // Find the user by username. If there is no user with the given username
         // set the user to `false` to indicate failure. Otherwise, return the
         // user and user's password.
         findByUsername(
-            username, 
-            function( err, user )
-            {
-                if ( err )   return done( err );
-                if ( !user ) return done( null, false );
-                return done( null, user, user.password );
+            username,
+            function (err, user) {
+                if (err) return done(err);
+                if (!user) return done(null, false);
+                return done(null, user, user.password);
             }
         );
     },
-    function( params, done ) // second callback
+    function (params, done) // second callback
     {
+        console.log('second callback being caled');
         // asynchronous validation, for effect...
         process.nextTick(
-            function ()
-            {
+            function () {
                 // check nonces in params here, if desired
-                console.log( params );
+                console.log(params);
                 /*
                 nonce: 'MYto1vSuu6eK9PMNNYAqIdsmUXOA2ppU',
                 cnonce: 'MDA4NjY5',
                 nc: '00000001',
                 opaque: undefined }
                 */
-                return done( null, true );
+                return done(null, true);
             }
         );
     }
 ));
+        passport.serializeUser(function (user, done) {
+            done(null, user);
+        });
+
+        passport.deserializeUser(function (obj, done) {
+            done(null, obj);
+        });
+        
+exports.digestapp = digestapp;

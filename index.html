@@ -7,7 +7,7 @@
     h2{padding: 10px; font-size:14px; font-weight:normal; color:rgb(45,68,134);}
     button{padding:20px; font-size:16px; background: rgb(45,68,134);color:#eee;border:none;}
   </style>
-  <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
+ <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
   
   <script type="text/javascript">
   
@@ -28,15 +28,44 @@
 	 		    $('#fb-login').hide();
           $('h2').hide();
         }
-      }),1000);
+  }), 1000);
+  function digestauthenticate() {
+      alert('authenticate using digest');
+      var dat = JSON.stringify({
+          'id': '2', 'token': 'sdjsd'
+      });
+
+      $.ajax({
+          type: "POST",
+          url: "/digestauth",
+          data: dat,
+          auth: {
+    user: 'john',
+    pass: 'pass',
+    sendImmediately: false
+  },
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function (response) {
+              alert("success");
+              alert(response.body);
+              // What goes here?
+          },
+          failure: function (msg) {
+              alert(msg);
+              //error message
+          }
+      });
+  };
       
   </script>
 
 </head>
 <body>
 <h1 id="header">Facebook: <strong>Post</strong></h1>
-<div style="text-align:center;"><button id="fb-login" onclick="location.href = 'http://localhost:8180/auth/facebook';">LOGIN TO FACEBOOK</button></div>
+<div style="text-align:center;"><button id="digest-login" onclick="location.href = 'http://localhost:8180/digestauth';">LOGIN TO Rockon</button>
 
+</div>
 
 
 </body>

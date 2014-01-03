@@ -1,0 +1,98 @@
+<html>
+<head>
+  <title>Facebook: Post on Facebook Example</title>
+  <style type="text/css">
+    body{margin: 0; padding: 10px; font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; }
+    h1{padding: 10px 0; font-size: 18px; font-weight: normal; color: #444; border-bottom: 1px solid #ccc; margin: 0 0 20px;}
+    h2{padding: 10px; font-size:14px; font-weight:normal; color:rgb(45,68,134);}
+    button{padding:20px; font-size:16px; background: rgb(45,68,134);color:#eee;border:none;}
+  </style>
+ <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+
+   var fbshare =  function () {
+        var title = 'My Title';
+        var summary = 'This is my summary';
+        var url = 'http://google.com';
+        var image = 'http://www.mydomain.com/images/myimage.png';
+
+        var fb = window.open('http://www.facebook.com/sharer.php?s=100&p[title]=' + encodeURIComponent(title) + '&p[url]=' + encodeURIComponent(url) + '&p[summary]=' + encodeURIComponent(summary) + '&p[images][0]=' + encodeURIComponent(image));
+        fb.focus();
+    }
+    var fbGetProfile = function () {
+        $.ajax({
+            type: "GET",
+            url: "/getProfile",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+               // alert(JSON.stringify(response));
+                jQuery('<textarea/>', {
+                    id: 'profile' ,
+                    rows: 5,
+                    html: JSON.stringify(response)
+                }).appendTo('#Homefeeds');
+            }
+            ,
+            failure: function (msg) {
+                alert(msg);
+            }
+        });
+    }
+
+
+    var fbGetHomeFeeds = function () {
+        var a = 0;
+        $.ajax({
+            type: "GET",
+            url: "/fbhome",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+               // alert("success");
+              //  alert(response.data[0]);
+                var jsonobject = JSON.stringify(response.data);
+               
+                for(var i=0;i< response.data.length;i++)
+                {
+                jQuery('<textarea/>', {
+    id: 'foo' +i,
+   rows:5,
+   html:JSON.stringify(response.data[i])}).appendTo('#Homefeeds');
+                }
+          //      $('#homefeeds').html(jsonobject);
+            },
+            failure: function (msg) {
+                alert(msg);
+            }
+        });
+    }
+
+
+</script>  
+  
+</head>
+<body>
+<a href='./logout' >logout</a>
+<h1 id="header">Facebook: <strong>Post</strong></h1>
+<div style="text-align:center;">
+<form id="fbpost" action="./post" method="post" > <p>Message: <input type="text" placeholder="Enter message" id="message" name="message" /></p><input type="submit" name="submit" value="Submit" /></form>
+<form id="fbpostfromapplicaiton" action="./postfromapplication" method="post" > <p>Message: <input type="text" placeholder="Enter message" id="Text1" name="message" /></p><input type="submit" name="submit" value="Submit from application" /></form>
+
+<button id="application_token" onclick="location.href= './apptoken'">Get App Token</button>
+<button id="getfbfeed" onclick="fbGetHomeFeeds()">Get Posts</button>
+<button id="Share" onclick="fbshare()">Share</button>
+<button id="GetProfile" onclick="fbGetProfile()">GetProfile</button>
+
+<div id='Homefeeds' style="text-align:center;>
+<textarea rows="50" id='homefeeds'  ></textarea>
+
+</div>
+
+</div>
+
+
+
+
+</body>
+</html>
