@@ -74,17 +74,19 @@ app.get('/fbhome', function(req, res) {
 app.get('/getProfile', function (req, res) {
     // Check to ensure user has a valid access_token
     if (oauth.access_token) {
-
+var callback = req.query.callback;
         // Call function that contains API call to post on Facebook (see facebook.js)
-        api.getProfile(oauth.access_token, res);
+        api.getProfile(oauth.access_token, res, callback);
 
     } else {
         console.log("Couldn't confirm that user was authenticated. Redirecting to /");
         res.redirect('/');
     }
-});
-var FACEBOOK_APP_ID = "236299956516217"
-var FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
+}); 
+//var FACEBOOK_APP_ID = "236299956516217"
+//var FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
+var FACEBOOK_APP_ID = "363685873749093"
+var FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
 var loggedinuser = '';
 
 // Use the FacebookStrategy within Passport.
@@ -94,7 +96,7 @@ var loggedinuser = '';
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:8180/callback"
+    callbackURL: "http://192.168.6.148:8180/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...

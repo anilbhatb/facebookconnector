@@ -25,8 +25,8 @@ function postMessage(access_token, message, response) {
       response.end(output);
     });
 
-}
-function getProfile(access_token, response) {
+}on
+function getProfile(access_token, response, callback) {
     // Specify the URL and query string parameters needed for the request
     var url = 'https://graph.facebook.com/me';
     var params = {
@@ -43,14 +43,18 @@ function getProfile(access_token, response) {
         if (body.error) return console.error("Error returned from facebook: ", body.error);
 
         // Generate output
-        //    var output = '<p>' + body + '</p>';
+        //    var output = '<p>' + body + '</p>';00
         //    output += '<pre>' + JSON.stringify(body, null, '\t') + '</pre>';
         //  console.log(output);
         // Send output as the response
-        console.log('profile');
-        console.log(JSON.stringify(body, null, '\t'));
+        //console.log('profile');
+        //console.log(JSON.stringify(body, null, '\t'));
         response.writeHeader(200, { 'Content-Type': 'application/json' });
+    if(callback)
+        response.end(callback+"("+JSON.stringify(body, null, '\t')+")");
+    else
         response.end(JSON.stringify(body, null, '\t'));
+
     });
 
 }

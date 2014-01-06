@@ -32,8 +32,10 @@ app.post('/post', function(req, res) {
     res.redirect('/');
   }
 });
-var FACEBOOK_APP_ID = "236299956516217"
-var FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
+//var FACEBOOK_APP_ID = "236299956516217"
+var FACEBOOK_APP_ID = "363685873749093"
+var FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
+//var FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
 
 
 // Passport session setup.

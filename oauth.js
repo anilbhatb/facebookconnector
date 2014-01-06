@@ -2,8 +2,10 @@ var request = require('request')
   , qs = require('qs');
 
 var callbackURL = 'http://'+process.env.OPENSHIFT_APP_DNS+'/callback'
-  , APP_ID = '236299956516217'
-  , APP_SECRET = '9364d9abbaf1e83f0a0608c4bc737f91';
+ // , APP_ID = '236299956516217'
+  //, APP_SECRET = '9364d9abbaf1e83f0a0608c4bc737f91';
+, APP_ID = '363685873749093'
+  , APP_SECRET = '84895681852dc4a96f23345fd4d855b0';
 
 
 var state = '';
@@ -16,7 +18,8 @@ function login(req, res) {
   state = Math.floor(Math.random()*1e19);
 //  console.log('sdsd');
 	var params = {
-		client_id: '236299956516217',
+		//client_id: '236299956516217',
+		client_id: '363685873749093',
 		redirect_uri: callbackURL,
 		state: state,
 		display: 'popup',
@@ -79,9 +82,11 @@ function callback(req, res, fn) {
 	     
 		if (code !== undefined) {
 			var params = {
-				client_id: '236299956516217',
-				redirect_uri: 'http://localhost:8180/callback',
-				client_secret: '9364d9abbaf1e83f0a0608c4bc737f91',
+				//client_id: '236299956516217',
+				client_id: '363685873749093',
+				redirect_uri: 'http://192.168.6.148:8180/callback',
+				//client_secret: '9364d9abbaf1e83f0a0608c4bc737f91',
+				client_secret: '84895681852dc4a96f23345fd4d855b0',
 				code: code
 			};
 
@@ -99,10 +104,10 @@ function callback(req, res, fn) {
 			    console.log("Connected to Facebook");
 			    // close the popup
 			    fn(access_token);
-			    //var output = '<html><head></head><body><form id=\"fbpost\" action=\"./post\" method=\"post\" > <p>Message: <input type=\"text\" placeholder=\"Enter message\" id=\"message\" name=\"message\" /></p><input type=\"submit\" name=\"submit\" value=\"Submit\" /></form></body></html>';
-			    res.redirect('/facebook.html');
-			    // res.writeHead(200, { 'Content-Type': 'text/html' });
-			    // res.end(output);
+			    var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
+			    //res.redirect('/facebook.html');
+			     res.writeHead(200, { 'Content-Type': 'text/html' });
+			     res.end(output);
 			});
 
 		} else {
