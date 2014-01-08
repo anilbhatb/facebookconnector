@@ -1,7 +1,8 @@
 
-var http = require('http');
+var http = require('http')
+	,fbapi = require('./facebook');
 var rockonurl = 'localhost';
-var rockonport = '52391';
+var rockonport = '49388';
 var fb_access_token;
 var fb_expires;
 
@@ -78,8 +79,10 @@ function GetAccessToken(req, res, fun)
 			//fb_expires = results.expires;
 			//exports.fb_access_token = access_token;
 			//exports.fb_expires = expires;
-
+			var socialInfo = JSON.parse(msg);
 			console.log(msg);
+			console.log("trying to get the token info");
+			console.log(socialInfo.SocialNetworks[0].TokenKey);
 			if (msg == "" || msg === null)
 			{
 				console.log("null returned");
@@ -88,7 +91,7 @@ function GetAccessToken(req, res, fun)
 			else
 			{
 				fun(req, res, msg);
-			}//  alert('f');
+			}
 			
 		});
 	});
@@ -100,7 +103,7 @@ function GetAccessToken(req, res, fun)
  	GetAccessToken(req, res,
 
 
-		function (req, res, body) {
+		function (req, res, token) {
 			var sid = req.query.sid;
 			var sessionid = req.query.sessionid;
 	
@@ -140,7 +143,7 @@ function GetAccessToken(req, res, fun)
 					if (callback)
 						res.end(callback + "(" + msg+ ")");
 					else
-						response.end(JSON.stringify(body, null, '\t'));
+						res.end(JSON.stringify(body, null, '\t'));
 
 					//res.end('true');
 				});
@@ -187,9 +190,12 @@ function GetAccessToken(req, res, fun)
 					console.log(err);
 				});
 				rockonres.on('end', function () {
-					console.log(msg);
-					//  alert('f');
-					res.end('true');
+					var callback = req.query.callback;
+					if (callback)
+						res.end(callback + "(" + msg + ")");
+					else
+						res.end(JSON.stringify(body, null, '\t'));
+
 				});
 			});
 			rockonreq.write(postdata);
@@ -214,6 +220,8 @@ function GetAccessToken(req, res, fun)
 					'Content-Type': 'application/json; charset=utf-8',
 					'dataType': "json",
 					'rockonconnector': "secretRockonCode",
+					'sid': sid,
+					'sessionid': sessionid
 
 				}
 			};
@@ -228,8 +236,14 @@ function GetAccessToken(req, res, fun)
 					console.log(err);
 				});
 				rockonres.on('end', function () {
+					console.log('final expected message');
 					console.log(msg);
-					res.end('true');
+					var callback = req.query.callback;
+					if (callback)
+						res.end(callback + "(" + msg + ")");
+					else
+						res.end(JSON.stringify("{}", null, '\t'));
+
 				});
 			});
 
