@@ -3,14 +3,15 @@ var http = require('http');
 var dd = '{"id": "2","token": "sdsd"}';
 var options = {
   host: 'localhost',
-  port: '4372',
-  path: '/WebSite1/Default.aspx/ValidateToken',
-  data: '{"id": "2","token": "sdsd"}',
+  port: '52391',
+  path: '/Post/GetInitialPosts',
+  //data: '{"id": "2","token": "sdsd"}',
   method: 'POST',
   headers: {
     'Content-Type': 'application/json; charset=utf-8',
     'dataType': "json",
-    'Content-Length': dd.length
+    'rockonconnector': "secretRockonCode"
+    //'Content-Length': dd.length
   }
 };
 
@@ -36,7 +37,7 @@ function validate(req, res) {
             res.end('true');
         });
     });
-    rockonreq.write(dd);
+    //rockonreq.write(dd);
     rockonreq.end();
 }
 

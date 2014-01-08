@@ -1,6 +1,6 @@
 var express = require('express')
   , fbapi = require('./facebook')
-  , rockonapi = require('./validatetoken')
+  , postcontroller = require('./postcontroller')
   , digestclient = require('./digestclient')
   , oauth = require('./oauth')
   , passport = require('passport')
@@ -111,7 +111,7 @@ passport.use(new FacebookStrategy({
   }
 ));
 app.get('/auth/facebook',
-
+	
   passport.authenticate('facebook', { scope: ['create_note', 'email', 'export_stream', 'manage_pages', 'photo_upload', 'publish_actions','read_stream', 'publish_stream', 'read_stream', 'share_item', 'status_update', 'user_about_me', 'user_activities', 'user_friends', 'user_interests', 'user_likes', 'user_photos', 'user_questions', 'video_upload'] }),
   //passport.authenticate('facebook', { scope: ['user_about_me', 'user_photos', 'email', 'publish_stream', 'read_stream', 'manage_pages'] }),
   function (req, res) {
@@ -219,9 +219,9 @@ passport.use
   //  res.redirect('/');
  // });
 // Routes for OAuth calls
-  app.post('/postcontroller/GetPost', postcontroller.GetPost);
-  app.post('/postcontroller/GetPostsOnScroll', postcontroller.GetPostsOnScroll);
-  app.post('/postcontroller/GetInitialPosts', postcontroller.GetInitialPosts);
+  app.get('/postcontroller/GetPost', postcontroller.GetPost);
+  app.get('/postcontroller/GetPostsOnScroll', postcontroller.GetPostsOnScroll);
+  app.get('/postcontroller/GetInitialPosts', postcontroller.GetInitialPosts);
 app.get('/login', oauth.login);
 app.get('/appposttouser', oauth.getapplicationAuthtoken);
 app.get('/callback', function (req, res) {
