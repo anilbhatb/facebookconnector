@@ -25,12 +25,12 @@ function postMessage(access_token, message, response) {
       response.end(output);
     });
 
-}on
-function getProfile(access_token, response, callback) {
+}
+function getProfile(tokeninfo, response, callback) {
     // Specify the URL and query string parameters needed for the request
     var url = 'https://graph.facebook.com/me';
     var params = {
-        access_token: access_token,
+        access_token: tokeninfo.access_token,
         fields: 'id,name,last_name,link,username,hometown,work,gender,languages,interests,education,email'
     };
     console.log('into get profile');
@@ -40,6 +40,9 @@ function getProfile(access_token, response, callback) {
         // Handle any errors that occur
         if (err) return console.error("Error occured: ", err);
         body = JSON.parse(body);
+        body.access_token = tokeninfo.access_token;
+        body.expires = tokeninfo.expires;
+        console.log("exireinfo :" + tokeninfo.expires);
         if (body.error) return console.error("Error returned from facebook: ", body.error);
 
         // Generate output
