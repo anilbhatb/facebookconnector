@@ -134,19 +134,19 @@ function getHomeFeeds(access_token, response, fun) {
         if (body.error) return console.error("Error returned from facebook: ", body.error);
         console.log("body" + body);
         var feedList = {};
-        var feed =
-        {
-            soid: body.data[0].id,
-            membersoid: body.data[0].from.id,
-            PictureRef: '',
-            FullName: body.data[0].from.name,
-            Recency: '',
-            Body: body.data[0].message,
-            LikeCount: body.data[0].likes.data.length,
-            SelfLike: '',
-            ReplyCount: body.data[0].comments.data.count,
-            LastModified: body.data.updated_time
-        };
+        //var feed =
+        //{
+        //    soid: body.data[0].id,
+        //    membersoid: body.data[0].from.id,
+        //    PictureRef: '',
+        //    FullName: body.data[0].from.name,
+        //    Recency: '',
+        //    Body: body.data[0].message,
+        //    LikeCount: body.data[0].likes.data.length,
+        //    SelfLike: '',
+        //    ReplyCount: body.data[0].comments.data.count,
+        //    LastModified: body.data.updated_time
+        //};
         console.log("*******************************" + JSON.stringify(body.data[0].id));
         // Generate output
         //    var output = '<p>' + body + '</p>';
