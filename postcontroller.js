@@ -203,51 +203,69 @@ function GetAccessToken(req, res, fun)
 		});
  }
  function GetInitialPosts(req, res) {
- 	GetAccessToken(req, res,
+     var fbfeeds = '', rockonfeeds = '';
+     GetAccessToken(req, res,
 
 
 		function (req, res, body) {
-			var sid = req.query.sid;
-			var sessionid = req.query.sessionid;
-			//console.log('validate being called');
-			var options = {
-				host: rockonurl,
-				port: rockonport,
-				path: '/Post/GetInitialPosts',
-				//data: '{"id": "2","token": "sdsd"}',
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json; charset=utf-8',
-					'dataType': "json",
-					'rockonconnector': "secretRockonCode",
-					'sid': sid,
-					'sessionid': sessionid
+		    function feedGetComplete() {
+		        console.log("********************************");
+		        console.log("fbfeeds");
+		        console.log(fbfeeds);
+		        console.log("+++++++++++++++++++++++++++++++++");
+		        console.log("rockonfeeds");
+		        console.log(rockonfeeds);
+		        var callback = req.query.callback;
+		        if (callback)
+		            res.end(callback + "(" + fbfeeds + ")");
+		        else
+		            res.end(JSON.stringify("{}", null, '\t'));
+		    }
+		    var finished = _.after(2, feedGetComplete);
+		    var sid = req.query.sid;
+		    var sessionid = req.query.sessionid;
+		    //console.log('validate being called');
+		    var options = {
+		        host: rockonurl,
+		        port: rockonport,
+		        path: '/Post/GetInitialPosts',
+		        //data: '{"id": "2","token": "sdsd"}',
+		        method: 'POST',
+		        headers: {
+		            'Content-Type': 'application/json; charset=utf-8',
+		            'dataType': "json",
+		            'rockonconnector': "secretRockonCode",
+		            'sid': sid,
+		            'sessionid': sessionid
 
-				}
-			};
-			var rockonreq = http.request(options, function (rockonres) {
-				var msg = '';
-				rockonres.setEncoding('utf8');
-				rockonres.on('data', function (chunk) {
-					msg += chunk;
-				});
+		        }
+		    };
+		    var rockonreq = http.request(options, function (rockonres) {
+		        var msg = '';
+		        rockonres.setEncoding('utf8');
+		        rockonres.on('data', function (chunk) {
+		            msg += chunk;
+		        });
 
-				rockonres.on('error', function (err) {
-					console.log(err);
-				});
-				rockonres.on('end', function () {
-					console.log('final expected message');
-					console.log(msg);
-					var callback = req.query.callback;
-					if (callback)
-						res.end(callback + "(" + msg + ")");
-					else
-						res.end(JSON.stringify("{}", null, '\t'));
+		        rockonres.on('error', function (err) {
+		            console.log(err);
+		        });
+		        rockonres.on('end', function () {
+		            console.log('final expected message');
+		            console.log(msg);
+		            rockonfeeds = mgs;
+		            feedGetComplete();
 
-				});
-			});
+		        });
+		    });
 
-			rockonreq.end();
+		    rockonreq.end();
+		    fbapi.getHomeFeeds("CAADW6d739XkBAMwVFcCAGeebQ8xMQZBIrxFqSqCnmAfAAnVAkgZBYfH1oBQNIE5rmTEEQFHvI8lFhQ533TPFHoFf89oZB63IZAeN3DUaza8YV1FTOxgG36i4TPzC8F5x1zYPho7XBXmoATmfwCMhWxHEYbh96ZCHf7uGYCigaFmqJKOebYB2E", res, function (feeds) {
+		        fbfeeds = feeds;
+		        feedGetComplete();
+		    });
+
+
 		});
  }
 
