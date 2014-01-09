@@ -22,7 +22,7 @@
     var fbGetProfile = function () {
         $.ajax({
             type: "GET",
-            url: "/getProfile",
+            url: "/fbgetProfile",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
@@ -58,7 +58,8 @@
                 jQuery('<textarea/>', {
     id: 'foo' +i,
    rows:5,
-   html:JSON.stringify(response.data[i])}).appendTo('#Homefeeds');
+   html:JSON.stringify(response.data[i])
+}).appendTo('#Homefeeds');
                 }
           //      $('#homefeeds').html(jsonobject);
             },
@@ -76,8 +77,8 @@
 <a href='./logout' >logout</a>
 <h1 id="header">Facebook: <strong>Post</strong></h1>
 <div style="text-align:center;">
-<form id="fbpost" action="./post" method="post" > <p>Message: <input type="text" placeholder="Enter message" id="message" name="message" /></p><input type="submit" name="submit" value="Submit" /></form>
-<form id="fbpostfromapplicaiton" action="./postfromapplication" method="post" > <p>Message: <input type="text" placeholder="Enter message" id="Text1" name="message" /></p><input type="submit" name="submit" value="Submit from application" /></form>
+<form id="fbpost" action="./fbpostfromuser" method="post" > <p>Message: <input type="text" placeholder="Enter message" id="message" name="message" /></p><input type="submit" name="submit" value="Submit" /></form>
+<form id="fbpostfromapplicaiton" action="./fbpostfromapplication" method="post" > <p>Message: <input type="text" placeholder="Enter message" id="Text1" name="message" /></p><input type="submit" name="submit" value="Submit from application" /></form>
 
 <button id="application_token" onclick="location.href= './apptoken'">Get App Token</button>
 <button id="getfbfeed" onclick="fbGetHomeFeeds()">Get Posts</button>

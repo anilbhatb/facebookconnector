@@ -1,6 +1,6 @@
 var express = require('express')
-  , api = require('./facebook')
-  , rockonapi = require('./validatetoken')
+  , fbapi = require('./facebook')
+  , postcontroller = require('./postcontroller')
   , digestclient = require('./digestclient')
   , oauth = require('./oauth')
   , passport = require('passport')
@@ -19,24 +19,24 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
 
-app.post('/post', function(req, res) {
+app.post('/fbpostfromuser', function(req, res) {
   // Check to ensure user has a valid access_token
   if (oauth.access_token) {
 
     // Call function that contains API call to post on Facebook (see facebook.js)
-    api.postMessage(oauth.access_token, req.body.message, res);
+    fbapi.postMessage(oauth.access_token, req.body.message, res);
     
   } else {
     console.log("Couldn't confirm that user was authenticated. Redirecting to /");
     res.redirect('/');
   }
 });
-app.post('/postfromapplication', function (req, res) {
+app.post('/fbpostfromapplication', function (req, res) {
     // Check to ensure user has a valid access_token
     if (oauth.access_token) {
 
         // Call function that contains API call to post on Facebook (see facebook.js)
-        api.postfromapplication(oauth.access_token, req.body.message, res);
+        fbapi.postfromapplication(oauth.access_token, req.body.message, res);
 
     } else {
         console.log("Couldn't confirm that user was authenticated. Redirecting to /");
@@ -64,27 +64,29 @@ app.get('/fbhome', function(req, res) {
   if (oauth.access_token) {
 
     // Call function that contains API call to post on Facebook (see facebook.js)
-    api.getHomeFeeds(oauth.access_token, res);
+    fbapi.getHomeFeeds(oauth.access_token, res);
     
   } else {
     console.log("Couldn't confirm that user was authenticated. Redirecting to /");
     res.redirect('/');
   }
 });
-app.get('/getProfile', function (req, res) {
+app.get('/fbgetProfile', function (req, res) {
     // Check to ensure user has a valid access_token
     if (oauth.access_token) {
-
-        // Call function that contains API call to post on Facebook (see facebook.js)
-        api.getProfile(oauth.access_token, res);
-
+		var callback = req.query.callback;
+    	// Call function that contains API call to post on Facebook (see facebook.js)
+		var tokeninfo = {access_token:oauth.access_token, expires:oauth.expires};
+        fbapi.getProfile(tokeninfo, res, callback);
     } else {
         console.log("Couldn't confirm that user was authenticated. Redirecting to /");
         res.redirect('/');
     }
-});
+}); 
 var FACEBOOK_APP_ID = "236299956516217"
 var FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
+//var FACEBOOK_APP_ID = "363685873749093"
+//var FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
 var loggedinuser = '';
 
 // Use the FacebookStrategy within Passport.
@@ -109,7 +111,7 @@ passport.use(new FacebookStrategy({
   }
 ));
 app.get('/auth/facebook',
-
+	
   passport.authenticate('facebook', { scope: ['create_note', 'email', 'export_stream', 'manage_pages', 'photo_upload', 'publish_actions','read_stream', 'publish_stream', 'read_stream', 'share_item', 'status_update', 'user_about_me', 'user_activities', 'user_friends', 'user_interests', 'user_likes', 'user_photos', 'user_questions', 'video_upload'] }),
   //passport.authenticate('facebook', { scope: ['user_about_me', 'user_photos', 'email', 'publish_stream', 'read_stream', 'manage_pages'] }),
   function (req, res) {
@@ -217,7 +219,9 @@ passport.use
   //  res.redirect('/');
  // });
 // Routes for OAuth calls
-app.get('/rockoncall', rockonapi.validate);
+  app.post('/postcontroller/GetPost', postcontroller.GetPost);
+  app.post('/postcontroller/GetPostsOnScroll', postcontroller.GetPostsOnScroll);
+  app.get('/postcontroller/GetInitialPosts', postcontroller.GetInitialPosts);
 app.get('/login', oauth.login);
 app.get('/appposttouser', oauth.getapplicationAuthtoken);
 app.get('/callback', function (req, res) {

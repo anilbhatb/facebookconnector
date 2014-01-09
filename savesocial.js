@@ -1,26 +1,29 @@
 
 var http = require('http');
-var dd = '{"id": "2","token": "sdsd"}';
+ var dat = JSON.stringify({
+    	'userid': '2', 'username': 'sdjsd', 'networkname': 'networkname', 'tokenkey': 'tokenkey', 'url': 'url', 'expiresIn': 'expiresIn'
+    });
+	
 var options = {
   host: 'localhost',
-  port: '52391',
-  path: '/Post/GetInitialPosts',
-  //data: '{"id": "2","token": "sdsd"}',
+  port: '26742',
+		path: '/Home.aspx/GetProfilePicture',
+ // data: dat,
   method: 'POST',
   headers: {
     'Content-Type': 'application/json; charset=utf-8',
-    'dataType': "json",
-    'rockonconnector': "secretRockonCode"
-    //'Content-Length': dd.length
+    'dataType': "json"
+  //  'Content-Length': dat.length
   }
 };
 
  
-function validate(req, res) {
+function savesocial() {
     console.log('validate being called');
     var dat = JSON.stringify({
-        'id': '2', 'token': 'sdjsd'
+    	'userid': '2', 'username': 'sdjsd', 'networkname': 'networkname', 'tokenkey': 'tokenkey', 'url': 'url', 'expiresIn': 'expiresIn'
     });
+	console.log('inside social save');
     var rockonreq = http.request(options, function (rockonres) {
         var msg = '';
         rockonres.setEncoding('utf8');
@@ -34,11 +37,10 @@ function validate(req, res) {
         rockonres.on('end', function () {
             console.log(msg);
             //  alert('f');
-            res.end('true');
+            //res.end('true');
         });
     });
-    //rockonreq.write(dd);
+    //rockonreq.write(dat);
     rockonreq.end();
 }
-
-exports.validate = validate;
+exports.savesocial = savesocial;
