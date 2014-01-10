@@ -2,7 +2,7 @@
 var http = require('http')
 	, fbapi = require('./facebook');
 var rockonurl = 'localhost';
-var rockonport = '29631';
+var rockonport = '57652';
 var fb_access_token;
 var fb_expires;
 
@@ -50,10 +50,6 @@ function GetAccessToken(req, res, fun)
 	    });
 	    rockonres.on('end', function () {
 	        console.log("access token data received ");
-
-	        console.log(socialInfo);
-
-	        //	console.log(socialInfo.SocialNetworks[0].TokenKey);
 	        if (socialInfo == "" || socialInfo == null) {
 	            console.log("null returned");
 	            fun(req, res);
@@ -61,11 +57,14 @@ function GetAccessToken(req, res, fun)
 	        else {
 	            socialInfo = JSON.parse(socialInfo);
 	            if (socialInfo.SocialNetworks) {
-	                console.log('socialInfo.access_token' + socialInfo.SocialNetworks[0].TokenKey);
-	                fb_access_token = socialInfo.SocialNetworks[0].TokenKey;
-	                fb_expires = socialInfo.expires;
-	                exports.fb_access_token = fb_access_token;
-	                exports.fb_expires = fb_expires;
+	            	console.log('socialInfo.access_token' + socialInfo.SocialNetworks[0].TokenKey);
+	            	fb_access_token = socialInfo.SocialNetworks[0].TokenKey;
+	            	fb_expires = socialInfo.expires;
+	            	exports.fb_access_token = fb_access_token;
+	            	exports.fb_expires = fb_expires;
+	            }
+	            else {
+	            	console.log('no social network info found for sid: '+ sid+ 'sessionid: '+sessoinid );
 	            }
                  fun(req, res);
 	        }
@@ -195,10 +194,17 @@ function GetAccessToken(req, res, fun)
 		            if (clubbedfeed.length >= maxfeeds)
 		                break;
 		            if (rindex < rockonposts.length && findex < facebookposts.length) {
-		                if (rockonposts[rindex][9] > facebookposts[findex][9]) {
-		                    clubbedfeed.push(rockonposts[rindex++]);
+		            	console.log("comparing date time of rockon and facebook");
+		            	console.log(typeof rockonposts[rindex][9]);
+		            	console.log(typeof facebookposts[findex][9]);
+		            	console.log(rockonposts[rindex][9]+":"+facebookposts[findex][9] );
+		            	if(new Date(rockonposts[rindex][9])> new Date(facebookposts[findex][9])){
+		            	//if (rockonposts[rindex][9] > rockonposts[rindex][9][findex][9]) {
+		            		console.log('adding' + rockonposts[rindex++]);
+		            		clubbedfeed.push(rockonposts[rindex++]);
 		                }
-		                else {
+		            	else {
+		            		console.log('adding fb' + facebookposts[findex++]);
 		                    clubbedfeed.push(facebookposts[findex++]);
 		                }
 		            }
