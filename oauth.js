@@ -99,10 +99,10 @@ function callback(req, res, fn) {
 			    console.log("Connected to Facebook");
 			    // close the popup
 			    fn(access_token);
-			    //var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
-			    res.redirect('/facebook.html');
-			   //  res.writeHead(200, { 'Content-Type': 'text/html' });
-			    // res.end(output);
+			    var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
+			    //res.redirect('/facebook.html');
+			    res.writeHead(200, { 'Content-Type': 'text/html' });
+			    res.end(output);
 			});
 
 		} else {

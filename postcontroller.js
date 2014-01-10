@@ -39,38 +39,38 @@ function GetAccessToken(req, res, fun)
 		}
 	};
 	var rockonreq = http.request(options, function (rockonres) {
-		var socialInfo = '';
-		rockonres.setEncoding('utf8');
-		rockonres.on('data', function (chunk) {
-			socialInfo += chunk;
-		});
+	    var socialInfo = '';
+	    rockonres.setEncoding('utf8');
+	    rockonres.on('data', function (chunk) {
+	        socialInfo += chunk;
+	    });
 
-		rockonres.on('error', function (err) {
-			console.log(err);
-		});
-		rockonres.on('end', function () {
-			console.log("access token data received ");
-			
-			console.log(socialInfo);
-		
-		//	console.log(socialInfo.SocialNetworks[0].TokenKey);
-			if (socialInfo == "" || socialInfo === null)
-			{
-				console.log("null returned");
-				fun(req, res);
-			}
-			else
-			{
-				socialInfo = JSON.parse(socialInfo);
-				console.log('socialInfo.access_token' + socialInfo.SocialNetworks[0].TokenKey);
-				fb_access_token = socialInfo.SocialNetworks[0].TokenKey;
-				fb_expires = socialInfo.expires;
-				exports.fb_access_token = fb_access_token;
-				exports.fb_expires = fb_expires;
-				fun(req, res);
-			}
-			
-		});
+	    rockonres.on('error', function (err) {
+	        console.log(err);
+	    });
+	    rockonres.on('end', function () {
+	        console.log("access token data received ");
+
+	        console.log(socialInfo);
+
+	        //	console.log(socialInfo.SocialNetworks[0].TokenKey);
+	        if (socialInfo == "" || socialInfo == null) {
+	            console.log("null returned");
+	            fun(req, res);
+	        }
+	        else {
+	            socialInfo = JSON.parse(socialInfo);
+	            if (socialInfo.SocialNetworks) {
+	                console.log('socialInfo.access_token' + socialInfo.SocialNetworks[0].TokenKey);
+	                fb_access_token = socialInfo.SocialNetworks[0].TokenKey;
+	                fb_expires = socialInfo.expires;
+	                exports.fb_access_token = fb_access_token;
+	                exports.fb_expires = fb_expires;
+	            }
+                 fun(req, res);
+	        }
+
+	    });
 	});
 	//rockonreq.write(dat);
 	rockonreq.end();
