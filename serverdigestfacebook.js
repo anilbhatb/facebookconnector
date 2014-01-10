@@ -1,3 +1,10 @@
+global.FACEBOOK_APP_ID = "236299956516217"
+global.FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
+global.CONNECTOR_URL = "localhost:8180";
+//global.FACEBOOK_APP_ID = "363685873749093"
+//global.FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
+//global.CONNECTOR_URL = "192.168.6.148";
+
 var express = require('express')
   , fbapi = require('./facebook')
   , postcontroller = require('./postcontroller')
@@ -83,12 +90,7 @@ app.get('/fbgetProfile', function (req, res) {
         res.redirect('/');
     }
 }); 
-var FACEBOOK_APP_ID = "236299956516217"
-var FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
-//var FACEBOOK_APP_ID = "363685873749093"
-//var FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
 var loggedinuser = '';
-
 // Use the FacebookStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
 //   credentials (in this case, an accessToken, refreshToken, and Facebook
@@ -96,7 +98,7 @@ var loggedinuser = '';
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:8180/callback"
+    callbackURL: "http://"+CONNECTOR_URL+"/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
@@ -171,7 +173,6 @@ passport.use
         findByUsername(
             username,
             function (err, user) {
-                console.log('call got called');
                 if (err) return done(err);
                 if (!user) return done(null, false);
                 loggedinuser = username;

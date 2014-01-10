@@ -210,19 +210,49 @@ function GetAccessToken(req, res, fun)
 
 		function (req, res, body) {
 		    function feedGetComplete() {
-		    	if (fbfeeds == '' || rockonfeeds == '')
-		    		return;
-		    	console.log("********************************");
-		        console.log("fbfeeds");
-		        console.log(fbfeeds);
-		        console.log("+++++++++++++++++++++++++++++++++");
-		        console.log("rockonfeeds");
-		        console.log(rockonfeeds);
-		       // var rockonfeed = JSON.parse(rockonfeeds);
+		        if (fbfeeds == '' || rockonfeeds == '')
+		            return;
+		        // var rockonfeed = JSON.parse(rockonfeeds);
 		        var groupfeed = {
-		        	fbfeed: fbfeeds,
-		        	rcfeed: rockonfeeds
+		            fbfeed: fbfeeds,
+		            rcfeed: rockonfeeds
 		        };
+		        var clubbedfeed = [];
+		        var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
+		        var rockonposts = rockonfeeds.posts;
+		        var facebookposts = fbfeeds.posts;
+		        console.log('rockon feeds');
+		        console.log(rockonfeeds.posts);
+		        console.log('facebook feeds');
+		        console.log(fbfeeds.posts);
+		        for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
+		            if (clubbedfeed.length >= maxfeeds)
+		                break;
+		            if (rindex < rockonposts.length && findex < facebookposts.length) {
+		                if (rockonposts[rindex][9] > facebookposts[findex][9]) {
+		                    clubbedfeed.push(rockonposts[rindex++]);
+		                }
+		                else {
+		                    clubbedfeed.push(facebookposts[findex++]);
+		                }
+		            }
+		            else if (rindex < rockonposts.length) {
+		                while (clubbedfeed.length < maxfeeds && rindex < rockonposts.length) {
+		                    clubbedfeed.push(rockonposts[rindex++]);
+		                }
+		                break;
+		            }
+		            else if (findex < facebookposts.length) {
+		                while (clubbedfeed.length < maxfeeds && rindex < facebookposts.length) {
+		                    clubbedfeed.push(facebookposts[rindex++]);
+		                }
+		                break;
+		            }
+		            else {
+		                break;
+		            }
+		        }
+
 		        console.log("*******++++++++++++++++++**************");
 		        var callback = req.query.callback;
 		        if (callback)
@@ -259,25 +289,24 @@ function GetAccessToken(req, res, fun)
 		        rockonres.on('error', function (err) {
 		            console.log(err);
 		        });
-				
+
 		        rockonres.on('end', function () {
-		            console.log('final expected message');
 		            console.log(msg);
 		            var rcfeeds = JSON.parse(msg);
 		            var rockonfeedArray = [];
 		            rcfeeds.forEach(function (p) {
-		            	var output =[];
-		            	output.push( p.Soid);
-		            	output.push( p.MemberSoid);
-		            	output.push( p.PictureRef);
-		            	output.push( p.Fullname);
-		            	output.push(p.Recency);
-		            	output.push(p.Body);
-		            	output.push(p.LikeCount);
-		            	output.push(p.SelfLike);//Whether post liked by the current member
-		            	output.push(p.ReplyCount);
-		            	output.push(p.LastModified);
-		            	rockonfeedArray.push(output);
+		                var output = [];
+		                output.push(p.Soid);
+		                output.push(p.MemberSoid);
+		                output.push(p.PictureRef);
+		                output.push(p.Fullname);
+		                output.push(p.Recency);
+		                output.push(p.Body);
+		                output.push(p.LikeCount);
+		                output.push(p.SelfLike); //Whether post liked by the current member
+		                output.push(p.ReplyCount);
+		                output.push(p.LastModified);
+		                rockonfeedArray.push(output);
 
 		            });
 		            rockonfeeds = { posts: rockonfeedArray };
