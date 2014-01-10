@@ -1,9 +1,8 @@
 
 var http = require('http')
 	, fbapi = require('./facebook');
-	//_ = require('lodash_node');
 var rockonurl = 'localhost';
-var rockonport = '43118';
+var rockonport = '29631';
 var fb_access_token;
 var fb_expires;
 
@@ -65,10 +64,10 @@ function GetAccessToken(req, res, fun)
 		}
 	};
 	var rockonreq = http.request(options, function (rockonres) {
-		var msg = '';
+		var socialInfo = '';
 		rockonres.setEncoding('utf8');
 		rockonres.on('data', function (chunk) {
-			msg += chunk;
+			socialInfo += chunk;
 		});
 
 		rockonres.on('error', function (err) {
@@ -76,22 +75,24 @@ function GetAccessToken(req, res, fun)
 		});
 		rockonres.on('end', function () {
 			console.log("access token data received ");
-			//fb_access_token = results.access_token;
-			//fb_expires = results.expires;
-			//exports.fb_access_token = access_token;
-			//exports.fb_expires = expires;
-			//var socialInfo = JSON.parse(msg);
-			console.log(msg);
-			console.log("trying to get the token info");
+			
+			console.log(socialInfo);
+		
 		//	console.log(socialInfo.SocialNetworks[0].TokenKey);
-			//if (msg == "" || msg === null)
-			//{
-			//	console.log("null returned");
-			//	res.end("true");
-			//}
-			//else
+			if (socialInfo == "" || socialInfo === null)
 			{
-				fun(req, res, msg);
+				console.log("null returned");
+				fun(req, res);
+			}
+			else
+			{
+				socialInfo = JSON.parse(socialInfo);
+				console.log('socialInfo.access_token' + socialInfo.SocialNetworks[0].TokenKey);
+				fb_access_token = socialInfo.SocialNetworks[0].TokenKey;
+				fb_expires = socialInfo.expires;
+				exports.fb_access_token = fb_access_token;
+				exports.fb_expires = fb_expires;
+				fun(req, res);
 			}
 			
 		});
@@ -102,9 +103,7 @@ function GetAccessToken(req, res, fun)
 }
  function GetPost(req, res) {
  	GetAccessToken(req, res,
-
-
-		function (req, res, token) {
+		function (req, res) {
 			var sid = req.query.sid;
 			var sessionid = req.query.sessionid;
 	
@@ -115,6 +114,7 @@ function GetAccessToken(req, res, fun)
 			var options = {
 				host: rockonurl,
 				port: rockonport,
+
 				path: '/Post/GetPost',
 				method: 'POST',
 				headers: {
@@ -157,7 +157,7 @@ function GetAccessToken(req, res, fun)
  	GetAccessToken(req, res,
 
 
-		function (req, res, body) {
+		function (req, res) {
 			var sid = req.query.sid;
 			var sessionid = req.query.sessionid;
 			console.log('validate being called');
@@ -206,21 +206,16 @@ function GetAccessToken(req, res, fun)
  function GetInitialPosts(req, res) {
      var fbfeeds = '', rockonfeeds = '';
      GetAccessToken(req, res,
+		function (req, res) {
 
-
-		function (req, res, body) {
-		    function feedGetComplete() {
-		        if (fbfeeds == '' || rockonfeeds == '')
+			function feedGetComplete() {
+		    	if ((fb_access_token && fbfeeds == '') || rockonfeeds == '')
 		            return;
-		        // var rockonfeed = JSON.parse(rockonfeeds);
 		        var clubbedfeed = [];
 		        var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
-		        var rockonposts = rockonfeeds.posts;
-		        var facebookposts = fbfeeds.posts;
-		       // console.log('rockon feeds');
-		       // console.log(rockonfeeds.posts);
-		        console.log('facebook feeds');
-		       // console.log(fbfeeds.posts);
+		        var rockonposts = rockonfeeds.posts == undefined?[]:rockonfeeds.posts;
+		        var facebookposts = fbfeeds.posts== undefined ?  []:fbfeeds.posts ;
+
 		        for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
 		            if (clubbedfeed.length >= maxfeeds)
 		                break;
@@ -255,7 +250,7 @@ function GetAccessToken(req, res, fun)
 		        	
 		        };
 
-		        console.log(groupfeed.posts);
+		      //  console.log(groupfeed.posts);
 		        var callback = req.query.callback;
 		        if (callback)
 		            res.end(callback + "(" + JSON.stringify(groupfeed) + ")");
@@ -319,10 +314,14 @@ function GetAccessToken(req, res, fun)
 		    });
 
 		    rockonreq.end();
-		    fbapi.getHomeFeeds("CAADW6d739XkBAMwVFcCAGeebQ8xMQZBIrxFqSqCnmAfAAnVAkgZBYfH1oBQNIE5rmTEEQFHvI8lFhQ533TPFHoFf89oZB63IZAeN3DUaza8YV1FTOxgG36i4TPzC8F5x1zYPho7XBXmoATmfwCMhWxHEYbh96ZCHf7uGYCigaFmqJKOebYB2E", res, function (feeds) {
-		        fbfeeds = feeds;
-		        feedGetComplete();
-		    });
+		    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA' + fb_access_token);
+		    if (fb_access_token) {
+		    	console.log('GetHome feeds called');
+		    	fbapi.getHomeFeeds(fb_access_token, res, function (feeds) {
+		    		fbfeeds = feeds;
+		    		feedGetComplete();
+		    	});
+		    }
 
 
 		});
