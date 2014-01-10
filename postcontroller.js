@@ -1,8 +1,9 @@
 
 var http = require('http')
-	,fbapi = require('./facebook');
+	, fbapi = require('./facebook');
+	//_ = require('lodash_node');
 var rockonurl = 'localhost';
-var rockonport = '49388';
+var rockonport = '43118';
 var fb_access_token;
 var fb_expires;
 
@@ -79,16 +80,16 @@ function GetAccessToken(req, res, fun)
 			//fb_expires = results.expires;
 			//exports.fb_access_token = access_token;
 			//exports.fb_expires = expires;
-			var socialInfo = JSON.parse(msg);
+			//var socialInfo = JSON.parse(msg);
 			console.log(msg);
 			console.log("trying to get the token info");
-			console.log(socialInfo.SocialNetworks[0].TokenKey);
-			if (msg == "" || msg === null)
-			{
-				console.log("null returned");
-				res.end("true");
-			}
-			else
+		//	console.log(socialInfo.SocialNetworks[0].TokenKey);
+			//if (msg == "" || msg === null)
+			//{
+			//	console.log("null returned");
+			//	res.end("true");
+			//}
+			//else
 			{
 				fun(req, res, msg);
 			}
@@ -155,6 +156,7 @@ function GetAccessToken(req, res, fun)
  function GetPostsOnScroll(req, res) {
  	GetAccessToken(req, res,
 
+
 		function (req, res, body) {
 			var sid = req.query.sid;
 			var sessionid = req.query.sessionid;
@@ -208,25 +210,35 @@ function GetAccessToken(req, res, fun)
 
 		function (req, res, body) {
 		    function feedGetComplete() {
-		        console.log("********************************");
+		    	if (fbfeeds == '' || rockonfeeds == '')
+		    		return;
+		    	console.log("********************************");
 		        console.log("fbfeeds");
 		        console.log(fbfeeds);
 		        console.log("+++++++++++++++++++++++++++++++++");
 		        console.log("rockonfeeds");
 		        console.log(rockonfeeds);
+		       // var rockonfeed = JSON.parse(rockonfeeds);
+		        var groupfeed = {
+		        	fbfeed: fbfeeds,
+		        	rcfeed: rockonfeeds
+		        };
+		        console.log("*******++++++++++++++++++**************");
 		        var callback = req.query.callback;
 		        if (callback)
-		            res.end(callback + "(" + fbfeeds + ")");
+		            res.end(callback + "(" + JSON.stringify(groupfeed) + ")");
 		        else
 		            res.end(JSON.stringify("{}", null, '\t'));
 		    }
-		    
+		    //var finished = _.after(2, feedGetComplete);
 		    var sid = req.query.sid;
 		    var sessionid = req.query.sessionid;
+		    //console.log('validate being called');
 		    var options = {
 		        host: rockonurl,
 		        port: rockonport,
 		        path: '/Post/GetInitialPosts',
+		        //data: '{"id": "2","token": "sdsd"}',
 		        method: 'POST',
 		        headers: {
 		            'Content-Type': 'application/json; charset=utf-8',
@@ -247,10 +259,28 @@ function GetAccessToken(req, res, fun)
 		        rockonres.on('error', function (err) {
 		            console.log(err);
 		        });
+				
 		        rockonres.on('end', function () {
 		            console.log('final expected message');
 		            console.log(msg);
-		            rockonfeeds = mgs;
+		            var rcfeeds = JSON.parse(msg);
+		            var rockonfeedArray = [];
+		            rcfeeds.forEach(function (p) {
+		            	var output =[];
+		            	output.push( p.Soid);
+		            	output.push( p.MemberSoid);
+		            	output.push( p.PictureRef);
+		            	output.push( p.Fullname);
+		            	output.push(p.Recency);
+		            	output.push(p.Body);
+		            	output.push(p.LikeCount);
+		            	output.push(p.SelfLike);//Whether post liked by the current member
+		            	output.push(p.ReplyCount);
+		            	output.push(p.LastModified);
+		            	rockonfeedArray.push(output);
+
+		            });
+		            rockonfeeds = { posts: rockonfeedArray };
 		            feedGetComplete();
 
 		        });
