@@ -155,7 +155,6 @@ function GetAccessToken(req, res, fun)
  function GetPostsOnScroll(req, res) {
  	GetAccessToken(req, res,
 
-
 		function (req, res, body) {
 			var sid = req.query.sid;
 			var sessionid = req.query.sessionid;
@@ -221,15 +220,13 @@ function GetAccessToken(req, res, fun)
 		        else
 		            res.end(JSON.stringify("{}", null, '\t'));
 		    }
-		    var finished = _.after(2, feedGetComplete);
+		    
 		    var sid = req.query.sid;
 		    var sessionid = req.query.sessionid;
-		    //console.log('validate being called');
 		    var options = {
 		        host: rockonurl,
 		        port: rockonport,
 		        path: '/Post/GetInitialPosts',
-		        //data: '{"id": "2","token": "sdsd"}',
 		        method: 'POST',
 		        headers: {
 		            'Content-Type': 'application/json; charset=utf-8',

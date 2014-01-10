@@ -1,12 +1,9 @@
 var request = require('request')
   , qs = require('qs');
-
-var callbackURL = 'http://'+process.env.OPENSHIFT_APP_DNS+'/callback'
-  , APP_ID = '236299956516217'
-  , APP_SECRET = '9364d9abbaf1e83f0a0608c4bc737f91';
-//, APP_ID = '363685873749093'
- // , APP_SECRET = '84895681852dc4a96f23345fd4d855b0';
-
+console.log("connector url:  "+ CONNECTOR_URL);
+var callbackURL = 'http://'+CONNECTOR_URL+'/callback'
+  , APP_ID = FACEBOOK_APP_ID
+  , APP_SECRET = FACEBOOK_APP_SECRET;
 
 var state = '';
 var access_token = '';
@@ -16,10 +13,8 @@ var app_access_token = '';
 function login(req, res) {
 
   state = Math.floor(Math.random()*1e19);
-//  console.log('sdsd');
 	var params = {
-		client_id: '236299956516217',
-		//client_id: '363685873749093',
+	    client_id: FACEBOOK_APP_ID,
 		redirect_uri: callbackURL,
 		state: state,
 		display: 'popup',
@@ -76,17 +71,16 @@ function callback(req, res, fn) {
     , cb_state = req.query.state
     , errorreason = req.query.error_reason
     , error = req.query.error;
-	//console.log();
+	console.log('http://' + CONNECTOR_URL + '/callback');
+    
 	//if (state == cb_state)
 	 {
-	     
+	     console.log(FACEBOOK_APP_ID);
 		if (code !== undefined) {
 			var params = {
-				client_id: '236299956516217',
-				//client_id: '363685873749093',
-				redirect_uri: 'http://localhost:8180/callback',
-				client_secret: '9364d9abbaf1e83f0a0608c4bc737f91',
-				//client_secret: '84895681852dc4a96f23345fd4d855b0',
+			    client_id: FACEBOOK_APP_ID,
+				redirect_uri: 'http://'+CONNECTOR_URL+'/callback',
+				client_secret: FACEBOOK_APP_SECRET,
 				code: code
 			};
 
@@ -105,10 +99,10 @@ function callback(req, res, fn) {
 			    console.log("Connected to Facebook");
 			    // close the popup
 			    fn(access_token);
-			    var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
-			   // res.redirect('/facebook.html');
-			     res.writeHead(200, { 'Content-Type': 'text/html' });
-			     res.end(output);
+			    //var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
+			    res.redirect('/facebook.html');
+			   //  res.writeHead(200, { 'Content-Type': 'text/html' });
+			    // res.end(output);
 			});
 
 		} else {

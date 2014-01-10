@@ -42,7 +42,6 @@ function getProfile(tokeninfo, response, callback) {
         body = JSON.parse(body);
         body.access_token = tokeninfo.access_token;
         body.expires = tokeninfo.expires;
-        console.log("exireinfo :" + tokeninfo.expires);
         if (body.error) return console.error("Error returned from facebook: ", body.error);
 
         // Generate output
