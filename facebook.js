@@ -77,14 +77,14 @@ function getconvertedfacebookfeed(feedArray) {
             if (jsonfeed.likes)
                 output.push(jsonfeed.likes.data.length);
             else
-                output.push("0");
+                output.push(0);
             output.push("");
             if (jsonfeed.comments)
                 output.push(jsonfeed.comments.data.length);
             else
-                output.push("0");
+                output.push(0);
             output.push(jsonfeed.updated_time);
-            output.push("facebook");
+            output.push("Facebook");
             console.log("mobile status populated");
             outputFeedArray.push(output);
         }
@@ -100,12 +100,12 @@ function getconvertedfacebookfeed(feedArray) {
             if (jsonfeed.likes)
                 output.push(jsonfeed.likes.data.length);
             else
-                output.push("0");
+                output.push(0);
             output.push("");
             if (jsonfeed.comments)
                 output.push(jsonfeed.comments.data.length);
             else
-                output.push("0");
+                output.push(0);
             output.push(jsonfeed.updated_time);
             console.log("status  populated");
             outputFeedArray.push(output);

@@ -278,7 +278,7 @@ function GetAccessToken(req, res, fun)
 		                output.push(p.SelfLike); //Whether post liked by the current member
 		                output.push(p.ReplyCount);
 		                output.push(p.LastModified);
-		                output.push("rockon");
+		                output.push("Rockon");
 		                rockonfeedArray.push(output);
 
 		            });
