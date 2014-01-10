@@ -213,18 +213,14 @@ function GetAccessToken(req, res, fun)
 		        if (fbfeeds == '' || rockonfeeds == '')
 		            return;
 		        // var rockonfeed = JSON.parse(rockonfeeds);
-		        var groupfeed = {
-		            fbfeed: fbfeeds,
-		            rcfeed: rockonfeeds
-		        };
 		        var clubbedfeed = [];
 		        var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
 		        var rockonposts = rockonfeeds.posts;
 		        var facebookposts = fbfeeds.posts;
-		        console.log('rockon feeds');
-		        console.log(rockonfeeds.posts);
+		       // console.log('rockon feeds');
+		       // console.log(rockonfeeds.posts);
 		        console.log('facebook feeds');
-		        console.log(fbfeeds.posts);
+		       // console.log(fbfeeds.posts);
 		        for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
 		            if (clubbedfeed.length >= maxfeeds)
 		                break;
@@ -254,6 +250,12 @@ function GetAccessToken(req, res, fun)
 		        }
 
 		        console.log("*******++++++++++++++++++**************");
+		        var groupfeed = {
+		        	posts: clubbedfeed
+		        	
+		        };
+
+		        console.log(groupfeed.posts);
 		        var callback = req.query.callback;
 		        if (callback)
 		            res.end(callback + "(" + JSON.stringify(groupfeed) + ")");
@@ -306,6 +308,7 @@ function GetAccessToken(req, res, fun)
 		                output.push(p.SelfLike); //Whether post liked by the current member
 		                output.push(p.ReplyCount);
 		                output.push(p.LastModified);
+		                output.push("rockon");
 		                rockonfeedArray.push(output);
 
 		            });

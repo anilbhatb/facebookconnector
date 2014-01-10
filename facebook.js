@@ -79,13 +79,12 @@ function getconvertedfacebookfeed(feedArray) {
             else
                 output.push("0");
             output.push("");
-            
-            output.push("");
             if (jsonfeed.comments)
                 output.push(jsonfeed.comments.data.length);
             else
                 output.push("0");
             output.push(jsonfeed.updated_time);
+            output.push("facebook");
             console.log("mobile status populated");
             outputFeedArray.push(output);
         }
