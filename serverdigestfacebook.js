@@ -28,15 +28,17 @@ app.use(app.router);
 
 app.post('/fbpostfromuser', function(req, res) {
   // Check to ensure user has a valid access_token
-  if (oauth.access_token) {
+	//if (oauth.access_token) {
+	postcontroller.GetAccessToken(req, res, function (req, res) {
+		if (postcontroller.fb_access_token) {
+			// Call function that contains API call to post on Facebook (see facebook.js)
+			fbapi.postMessage(postcontroller.fb_access_token, req.body.message, res);
 
-    // Call function that contains API call to post on Facebook (see facebook.js)
-    fbapi.postMessage(oauth.access_token, req.body.message, res);
-    
-  } else {
-    console.log("Couldn't confirm that user was authenticated. Redirecting to /");
-    res.redirect('/');
-  }
+		} else {
+			console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+			res.redirect('/');
+		}
+	});
 });
 app.post('/fbpostfromapplication', function (req, res) {
     // Check to ensure user has a valid access_token

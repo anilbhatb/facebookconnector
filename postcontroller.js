@@ -7,31 +7,6 @@ var fb_access_token;
 var fb_expires;
 
  
-function validate(req, res) {
-
-    var dat = JSON.stringify({
-        'id': '2', 'token': 'sdjsd'
-    });
-    var rockonreq = http.request(options, function (rockonres) {
-        var msg = '';
-        rockonres.setEncoding('utf8');
-        rockonres.on('data', function (chunk) {
-            msg += chunk;
-        });
-
-        rockonres.on('error', function (err) {
-            console.log(err);
-        });
-        rockonres.on('end', function () {
-            console.log(msg);
-            //  alert('f');
-            res.end('true');
-        });
-    });
-    //rockonreq.write(dd);
-    rockonreq.end();
-}
-
 function GetAccessToken(req, res, fun)
 {
 	console.log('getaccess token being called');
@@ -327,7 +302,7 @@ function GetAccessToken(req, res, fun)
 		});
  }
 
-exports.validate = validate;
+ exports.GetAccessToken = GetAccessToken;
 exports.GetInitialPosts = GetInitialPosts;
 exports.GetPostsOnScroll = GetPostsOnScroll;
 exports.GetPost = GetPost;
