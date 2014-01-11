@@ -135,12 +135,12 @@ function getLikes(access_token, response,post_id, fun) {
     console.log('call to get likes');
   var url = 'https://graph.facebook.com/'+post_id+'/likes';
   var params = {
-        access_token: access_token,
+        access_token: access_token
     };
   send(url, params, access_token, response, 
 	  function (body) {
 	  	response.writeHeader(200, { 'Content-Type': 'application/json' });
-	  	response.end(getConvertedLikes(body.data));
+	  	response.end(JSON.stringify(getConvertedLikes(body.data)));
 	  });
 }
 function getReplies(access_token, response, post_id, fun) {
