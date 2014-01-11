@@ -149,7 +149,11 @@ function getReplies(access_token, response, post_id, fun) {
         access_token: access_token,
         limit: 100
     };
-    send(url, params, access_token, response, fun);
+    send(url, params, access_token, response,
+    function (body) {
+        response.writeHeader(200, { 'Content-Type': 'application/json' });
+        response.end(JSON.stringify(getConvertedReplies(body.data)));
+	});
 }
 function send(url,params, access_token, response, fun) {
     request.get({ url: url, qs: params }, function (err, resp, body) {
