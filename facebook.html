@@ -39,6 +39,46 @@
             }
         });
     }
+    var fbGetComments = function () {
+        $.ajax({
+            type: "GET",
+            url: "/fbgetComments",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                // alert(JSON.stringify(response));
+                jQuery('<textarea/>', {
+                    id: 'profile',
+                    rows: 5,
+                    html: JSON.stringify(response)
+                }).appendTo('#Homefeeds');
+            }
+            ,
+            failure: function (msg) {
+                alert(msg);
+            }
+        });
+    }
+    var fbGetLikes = function () {
+        $.ajax({
+            type: "GET",
+            url: "/fbgetLikes",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                // alert(JSON.stringify(response));
+                jQuery('<textarea/>', {
+                    id: 'profile',
+                    rows: 5,
+                    html: JSON.stringify(response)
+                }).appendTo('#Homefeeds');
+            }
+            ,
+            failure: function (msg) {
+                alert(msg);
+            }
+        });
+    }
     var feedconvert = function () {
 
         var inputfeed = $("#inputfeed").val();
@@ -162,6 +202,8 @@
 <button id="getfbfeed" onclick="fbGetHomeFeeds()">Get Posts</button>
 <button id="Share" onclick="fbshare()">Share</button>
 <button id="GetProfile" onclick="fbGetProfile()">GetProfile</button>
+<button id="GetLikes" onclick="fbGetLikes()">GetLikes</button>
+<button id="GetComments" onclick="fbGetComments()">GetReplies</button>
 
 <div id='Homefeeds' style="text-align:center">
 

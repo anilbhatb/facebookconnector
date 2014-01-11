@@ -44,19 +44,11 @@ function getProfile(tokeninfo, response, callback) {
         body.expires = tokeninfo.expires;
         if (body.error) return console.error("Error returned from facebook: ", body.error);
 
-        // Generate output
-        //    var output = '<p>' + body + '</p>';00
-        //    output += '<pre>' + JSON.stringify(body, null, '\t') + '</pre>';
-        //  console.log(output);
-        // Send output as the response
-        //console.log('profile');
-        //console.log(JSON.stringify(body, null, '\t'));
-        response.writeHeader(200, { 'Content-Type': 'application/json' });
+    response.writeHeader(200, { 'Content-Type': 'application/json' });
     if(callback)
         response.end(callback+"("+JSON.stringify(body, null, '\t')+")");
     else
         response.end(JSON.stringify(body, null, '\t'));
-
     });
 
 }
@@ -114,7 +106,39 @@ function getconvertedfacebookfeed(feedArray) {
     });
     return { posts: outputFeedArray };
 }
-
+function getLikes(access_token, response,post_id, fun) {
+    console.log('call to get likes');
+  var url = 'https://graph.facebook.com/'+post_id+'/likes';
+  var params = {
+        access_token: access_token,
+        
+    };
+    send(url, params, access_token, response, fun);
+}
+function getReplies(access_token, response, post_id, fun) {
+    var url = 'https://graph.facebook.com/' + post_id + '/comments';
+    var params = {
+        access_token: access_token,
+        limit: 100
+    };
+    send(url, params, access_token, response, fun);
+}
+function send(url,params, access_token, response, fun) {
+    request.get({ url: url, qs: params }, function (err, resp, body) {
+        // Handle any errors that occur
+        console.log('url' + url);
+        if (err) return console.error("Error occured: ", err);
+        body = JSON.parse(body); console.log(body);
+        if (body.error) return console.error("Error returned from facebook: ", body.error);
+        if (fun) {
+            fun(body);
+        }
+        else {
+            response.writeHeader(200, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify(body, null, '\t'));
+        }
+    });
+}
 function getHomeFeeds(access_token, response, fun) {
     // Specify the URL and query string parameters needed for the request
     var url = 'https://graph.facebook.com/me/home';
@@ -125,44 +149,21 @@ function getHomeFeeds(access_token, response, fun) {
     console.log('into home feeds');
     // Send the request
     request.get({ url: url, qs: params }, function (err, resp, body) {
-
         // Handle any errors that occur
         if (err) return console.error("Error occured: ", err);
         body = JSON.parse(body);
         if (body.error) return console.error("Error returned from facebook: ", body.error);
         console.log("body" + body);
         var feedList = {};
-        //var feed =
-        //{
-        //    soid: body.data[0].id,
-        //    membersoid: body.data[0].from.id,
-        //    PictureRef: '',
-        //    FullName: body.data[0].from.name,
-        //    Recency: '',
-        //    Body: body.data[0].message,
-        //    LikeCount: body.data[0].likes.data.length,
-        //    SelfLike: '',
-        //    ReplyCount: body.data[0].comments.data.count,
-        //    LastModified: body.data.updated_time
-        //};
-        console.log("*******************************" + JSON.stringify(body.data[0].id));
-        // Generate output
-        //    var output = '<p>' + body + '</p>';
-        //    output += '<pre>' + JSON.stringify(body, null, '\t') + '</pre>';
-        //  console.log(output);
-        // Send output as the response
         response.writeHeader(200, { 'Content-Type': 'application/json' });
         var output = getconvertedfacebookfeed(body.data);
-        console.log("after getconvertedfacebookfeeds");
         if (fun) {
             fun(output);
         }
         else {
             response.end(JSON.stringify(body, null, '\t'));
         }
-
     });
-
 }
 
 function postfromapplication(access_token,message, response) {
@@ -196,3 +197,5 @@ exports.postMessage = postMessage;
 exports.getHomeFeeds = getHomeFeeds;
 exports.postfromapplication = postfromapplication;
 exports.getProfile = getProfile;
+exports.getLikes = getLikes;
+exports.getReplies = getReplies;

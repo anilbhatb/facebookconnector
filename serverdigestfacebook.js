@@ -58,7 +58,6 @@ else {
     app.post('/fbpostfromapplication', function (req, res) {
         // Check to ensure user has a valid access_token
         if (oauth.access_token) {
-
             // Call function that contains API call to post on Facebook (see facebook.js)
             fbapi.postfromapplication(oauth.access_token, req.body.message, res);
 
@@ -67,21 +66,27 @@ else {
             res.redirect('/');
         }
     });
-
-    app.get('/apptoken', function (req, res) {
+    app.get('/fbgetReplies', function (req, res) {
         // Check to ensure user has a valid access_token
-        if (oauth.access_token) {
-
-            oauth.getapplicationAuthtoken(oauth.access_token, res);
-            //  if (oauth.app_access_token) {
-            //    console.log('application auth token:' + oauth.app_access_token);
-            // } // Call function that contains API call to post on Facebook (see facebook.js)
-            //  api.postMessage(oauth.access_token, req.body.message, res);
-
-        } else {
-            console.log("Couldn't confirm that user was authenticated. Redirecting to /");
-            res.redirect('/');
-        }
+        postcontroller.GetAccessToken(req, res, function (req, res) {
+            if (postcontroller.fb_access_token) {
+                fbapi.getReplies(oauth.access_token, res, req.query.postid);
+            } else {
+                console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+                res.redirect('/');
+            }
+        });
+    });
+    app.get('/fbgetLikes', function (req, res) {
+        // Check to ensure user has a valid access_token
+        postcontroller.GetAccessToken(req, res, function (req, res) {
+            if (postcontroller.fb_access_token) {
+                fbapi.getLikes(oauth.access_token, res, req.query.postid);
+            } else {
+                console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+                res.redirect('/');
+            }
+        });
     });
     app.get('/fbhome', function (req, res) {
         // Check to ensure user has a valid access_token
@@ -242,6 +247,7 @@ else {
     app.get('/postcontroller/GetInitialPosts', postcontroller.GetInitialPosts);
     app.get('/login', oauth.login);
     app.get('/appposttouser', oauth.getapplicationAuthtoken);
+    
     app.get('/callback', function (req, res) {
         oauth.callback(req, res, function (token) {
 
