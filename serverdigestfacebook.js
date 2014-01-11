@@ -43,10 +43,12 @@ else {
 
     app.post('/fbpostfromuser', function (req, res) {
         // Check to ensure user has a valid access_token
-        //if (oauth.access_token) {
+    	//if (oauth.access_token) {
         postcontroller.GetAccessToken(req, res, function (req, res) {
-            if (postcontroller.fb_access_token) {
-                // Call function that contains API call to post on Facebook (see facebook.js)
+
+        	if (postcontroller.fb_access_token) {
+        		// Call function that contains API call to post on Facebook (see facebook.js)
+        		
                 fbapi.postMessage(postcontroller.fb_access_token, req.body.message, res);
 
             } else {

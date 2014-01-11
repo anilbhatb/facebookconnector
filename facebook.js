@@ -99,6 +99,7 @@ function getconvertedfacebookfeed(feedArray) {
             else
                 output.push(0);
             output.push(jsonfeed.updated_time);
+            output.push("Facebook");
             console.log("status  populated");
             outputFeedArray.push(output);
         }
@@ -106,14 +107,32 @@ function getconvertedfacebookfeed(feedArray) {
     });
     return { posts: outputFeedArray };
 }
+function getConvertedLikes(likesArray)
+{ 
+	var outputlikes = [];
+	likesArray.forEach(function (objlike) {
+		outputlikes.push(objlike.name);
+	});
+	return {members:outputlikes };
+}
+function getConvertedReplies(replyArray) {
+	var outputreply = [];
+	replyArray.forEach(function (objreply) {
+		outputreply.push(objreply.name);
+	});
+	return { data: outputreply };
+}
 function getLikes(access_token, response,post_id, fun) {
     console.log('call to get likes');
   var url = 'https://graph.facebook.com/'+post_id+'/likes';
   var params = {
         access_token: access_token,
-        
     };
-    send(url, params, access_token, response, fun);
+  send(url, params, access_token, response, 
+	  function (body) {
+	  	response.writeHeader(200, { 'Content-Type': 'application/json' });
+	  	response.end(getConvertedLikes(body.data));
+	  });
 }
 function getReplies(access_token, response, post_id, fun) {
     var url = 'https://graph.facebook.com/' + post_id + '/comments';

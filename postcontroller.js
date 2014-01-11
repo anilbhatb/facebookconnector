@@ -10,8 +10,8 @@ var fb_expires;
 function GetAccessToken(req, res, fun)
 {
 	console.log('getaccess token being called');
-	var sid = req.query.sid;
-	var sessionid = req.query.sessionid;
+	var sid = req.query.sid == undefined ? req.body.sid : req.query.sid;
+	var sessionid = req.query.sessionid == undefined ? req.body.sessionid:req.query.sessionid;
 	//var postdata = JSON.stringify({
 	//	'soid': req.body.soid, 'replySoid': req.body.replySoid, 'areRepliesExposed': req.body.areRepliesExposed, 'onNotification': req.body.onNotification, 'replyCountBeforeNotification': req.body.replyCountBeforeNotification
 	//});
@@ -200,11 +200,11 @@ function GetAccessToken(req, res, fun)
 		            	console.log(rockonposts[rindex][9]+":"+facebookposts[findex][9] );
 		            	if(new Date(rockonposts[rindex][9])> new Date(facebookposts[findex][9])){
 		            	//if (rockonposts[rindex][9] > rockonposts[rindex][9][findex][9]) {
-		            		console.log('adding' + rockonposts[rindex++]);
+		            		console.log('adding' + rockonposts[rindex]);
 		            		clubbedfeed.push(rockonposts[rindex++]);
 		                }
 		            	else {
-		            		console.log('adding fb' + facebookposts[findex++]);
+		            		console.log('adding fb' + facebookposts[findex]);
 		                    clubbedfeed.push(facebookposts[findex++]);
 		                }
 		            }
