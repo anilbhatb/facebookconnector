@@ -54,13 +54,14 @@ function getProfile(tokeninfo, response, callback) {
 }
 function getconvertedfacebookfeed(feedArray, maxdate) {
 	var outputFeedArray = [];
+	maxdate = "1/8/2014 6:50:52 AM";
 	console.log("date: "+ maxdate);
 	var objmaxdate =maxdate?  new Date(maxdate):undefined;
 	feedArray.forEach(function (jsonfeed) {
 		//   var inputfeed = $("#inputfeed").val();
 		var output = [];
 		if(objmaxdate != undefined
-		 && new Date(jsonfeed.updated_time) < objmaxdate)
+		 && new Date(jsonfeed.updated_time) >= objmaxdate)
 			{
 			console.log(jsonfeed.updated_time + "does not match the criteria ")
 			}
