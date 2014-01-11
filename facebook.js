@@ -64,7 +64,7 @@ function getconvertedfacebookfeed(feedArray, maxdate) {
 	        console.log(jsonfeed.updated_time + "does not match the criteria ")
 	    }
 	    else {
-	        if (jsonfeed.status_type == 'mobile_status_update') {
+	        if (jsonfeed.status_type == 'mobile_status_update'  || (jsonfeed.type == 'status' && jsonfeed.status_type == 'wall_post')) {
 	            output.push(jsonfeed.id);
 	            output.push(jsonfeed.from.id);
 	            output.push("");
