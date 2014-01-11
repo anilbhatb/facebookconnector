@@ -52,57 +52,65 @@ function getProfile(tokeninfo, response, callback) {
     });
 
 }
-function getconvertedfacebookfeed(feedArray) {
-    var outputFeedArray = [];
-    feedArray.forEach(function (jsonfeed) {
-        //   var inputfeed = $("#inputfeed").val();
-        var output = [];
-        //  var jsonfeed = JSON.parse(inputfeed);
-        if (jsonfeed.status_type == 'mobile_status_update') {
-            output.push(jsonfeed.id);
-            output.push(jsonfeed.from.id);
-            output.push("");
-            console.log("middle of  mobile status update");
-            output.push(jsonfeed.from.name);
-            output.push(jsonfeed.updated_time);
-            output.push(jsonfeed.message);
-            if (jsonfeed.likes)
-                output.push(jsonfeed.likes.data.length);
-            else
-                output.push(0);
-            output.push("");
-            if (jsonfeed.comments)
-                output.push(jsonfeed.comments.data.length);
-            else
-                output.push(0);
-            output.push(jsonfeed.updated_time);
-            output.push("Facebook");
-            console.log("mobile status populated");
-            outputFeedArray.push(output);
-        }
-        else if (jsonfeed.type == 'status' && jsonfeed.status_type == undefined) {
-            console.log("status parse begin");
-            output.push(jsonfeed.id);
-            output.push(jsonfeed.from.id);
-            output.push("");
-            output.push(jsonfeed.from.name);
-            output.push(jsonfeed.updated_time);
-            console.log("status parse middle");
-            output.push(jsonfeed.story);
-            if (jsonfeed.likes)
-                output.push(jsonfeed.likes.data.length);
-            else
-                output.push(0);
-            output.push("");
-            if (jsonfeed.comments)
-                output.push(jsonfeed.comments.data.length);
-            else
-                output.push(0);
-            output.push(jsonfeed.updated_time);
-            output.push("Facebook");
-            console.log("status  populated");
-            outputFeedArray.push(output);
-        }
+function getconvertedfacebookfeed(feedArray, maxdate) {
+	var outputFeedArray = [];
+	console.log("date: "+ maxdate);
+	var objmaxdate =maxdate?  new Date(maxdate):undefined;
+	feedArray.forEach(function (jsonfeed) {
+		//   var inputfeed = $("#inputfeed").val();
+		var output = [];
+		if(objmaxdate != undefined
+		 && new Date(jsonfeed.updated_time) < objmaxdate)
+			{
+			console.log(jsonfeed.updated_time + "does not match the criteria ")
+			}
+		else{
+		if (jsonfeed.status_type == 'mobile_status_update') {
+			output.push(jsonfeed.id);
+			output.push(jsonfeed.from.id);
+			output.push("");
+			//console.log("middle of  mobile status update");
+			output.push(jsonfeed.from.name);
+			output.push(jsonfeed.updated_time);
+			output.push(jsonfeed.message);
+			if (jsonfeed.likes)
+				output.push(jsonfeed.likes.data.length);
+			else
+				output.push(0);
+			output.push("");
+			if (jsonfeed.comments)
+				output.push(jsonfeed.comments.data.length);
+			else
+				output.push(0);
+			output.push(jsonfeed.updated_time);
+			output.push("Facebook");
+			///console.log("mobile status populated");
+			outputFeedArray.push(output);
+		}
+		else if (jsonfeed.type == 'status' && jsonfeed.status_type == undefined) {
+			//console.log("status parse begin");
+			output.push(jsonfeed.id);
+			output.push(jsonfeed.from.id);
+			output.push("");
+			output.push(jsonfeed.from.name);
+			output.push(jsonfeed.updated_time);
+			// console.log("status parse middle");
+			output.push(jsonfeed.story);
+			if (jsonfeed.likes)
+				output.push(jsonfeed.likes.data.length);
+			else
+				output.push(0);
+			output.push("");
+			if (jsonfeed.comments)
+				output.push(jsonfeed.comments.data.length);
+			else
+				output.push(0);
+			output.push(jsonfeed.updated_time);
+			output.push("Facebook");
+			// console.log("status  populated");
+			outputFeedArray.push(output);
+		}
+	}
 
     });
     return { posts: outputFeedArray };
@@ -158,7 +166,7 @@ function send(url,params, access_token, response, fun) {
         }
     });
 }
-function getHomeFeeds(access_token, response, fun) {
+function getHomeFeeds(access_token, response, fun,date) {
     // Specify the URL and query string parameters needed for the request
     var url = 'https://graph.facebook.com/me/home';
     var params = {
@@ -166,16 +174,16 @@ function getHomeFeeds(access_token, response, fun) {
       //  message: message
     };
     console.log('into home feeds');
+    console.log(date);
     // Send the request
     request.get({ url: url, qs: params }, function (err, resp, body) {
         // Handle any errors that occur
         if (err) return console.error("Error occured: ", err);
         body = JSON.parse(body);
         if (body.error) return console.error("Error returned from facebook: ", body.error);
-        console.log("body" + body);
         var feedList = {};
         response.writeHeader(200, { 'Content-Type': 'application/json' });
-        var output = getconvertedfacebookfeed(body.data);
+        var output = getconvertedfacebookfeed(body.data,date);
         if (fun) {
             fun(output);
         }

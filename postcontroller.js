@@ -23,7 +23,7 @@ function GetAccessToken(req, res, fun)
 	//	list[parts.shift().trim()] = unescape(parts.join('='));
 	//});
 
-	console.log("cookies: "+rc);
+	
 	var options = {
 		host: rockonurl,
 		port: rockonport,
@@ -128,14 +128,11 @@ function GetAccessToken(req, res, fun)
 		});
 }
  function GetPostsOnScroll(req, res) {
+ 	var fbfeeds = '', rockonfeeds = '';
  	GetAccessToken(req, res,
-
-
 		function (req, res) {
 			var sid = req.query.sid;
 			var sessionid = req.query.sessionid;
-			console.log('validate being called');
-
 			var postdata = JSON.stringify({
 				'soid': req.body.soid, 'date': req.body.date
 			});
@@ -155,89 +152,110 @@ function GetAccessToken(req, res, fun)
 				}
 			};
 			var rockonreq = http.request(options, function (rockonres) {
-				var msg = '';
+				var strFeed = '';
 				rockonres.setEncoding('utf8');
 				rockonres.on('data', function (chunk) {
-					msg += chunk;
+					strFeed += chunk;
 				});
 
 				rockonres.on('error', function (err) {
 					console.log(err);
 				});
 				rockonres.on('end', function () {
-					var callback = req.query.callback;
-					if (callback)
-						res.end(callback + "(" + msg + ")");
-					else
-						res.end(JSON.stringify(body, null, '\t'));
-
+					 rockonfeeds = convertrockonfeeds(strfeeds);
+					feedGetComplete(fbfeeds, rockonfeeds, req, res);
 				});
 			});
 			rockonreq.write(postdata);
 			rockonreq.end();
+			if (fb_access_token) {
+				console.log('GetHome feeds called');
+				fbapi.getHomeFeeds(fb_access_token, res, function (feeds) {
+					fbfeeds = feeds;
+					feedGetComplete(fbfeeds, rockonfeeds, req, res);
+				}, date);
+			}
 		});
  }
+ function feedGetComplete(fbfeeds,rockonfeeds,req, res) {
+ 	if ((fb_access_token && fbfeeds == '') || rockonfeeds == '')
+ 		return;
+ 	var clubbedfeed = [];
+ 	var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
+ 	var rockonposts = rockonfeeds.posts == undefined ? [] : rockonfeeds.posts;
+ 	var facebookposts = fbfeeds.posts == undefined ? [] : fbfeeds.posts;
+
+ 	for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
+ 		if (clubbedfeed.length >= maxfeeds)
+ 			break;
+ 		if (rindex < rockonposts.length && findex < facebookposts.length) {
+ 			if (new Date(rockonposts[rindex][9]) > new Date(facebookposts[findex][9])) {
+ 				//if (rockonposts[rindex][9] > rockonposts[rindex][9][findex][9]) {
+ 			//	console.log('adding' + rockonposts[rindex]);
+ 				clubbedfeed.push(rockonposts[rindex++]);
+ 			}
+ 			else {
+ 				//console.log('adding fb' + facebookposts[findex]);
+ 				clubbedfeed.push(facebookposts[findex++]);
+ 			}
+ 		}
+ 		else if (rindex < rockonposts.length) {
+ 			while (clubbedfeed.length < maxfeeds && rindex < rockonposts.length) {
+ 				clubbedfeed.push(rockonposts[rindex++]);
+ 			}
+ 			break;
+ 		}
+ 		else if (findex < facebookposts.length) {
+ 			while (clubbedfeed.length < maxfeeds && rindex < facebookposts.length) {
+ 				clubbedfeed.push(facebookposts[rindex++]);
+ 			}
+ 			break;
+ 		}
+ 		else {
+ 			break;
+ 		}
+ 	}
+
+ 	console.log("*******++++++++++++++++++**************");
+ 	var groupfeed = {
+ 		posts: clubbedfeed
+
+ 	};
+
+ 	//  console.log(groupfeed.posts);
+ 	var callback = req.query.callback;
+ 	if (callback)
+ 		res.end(callback + "(" + JSON.stringify(groupfeed) + ")");
+ 	else
+ 		res.end(JSON.stringify("{}", null, '\t'));
+ }
+ function convertrockonfeeds(msg){
+	var rcfeeds = JSON.parse(msg);
+	var rockonfeedArray = [];
+	rcfeeds.forEach(function (p) {
+ 	var output = [];
+ 	output.push(p.Soid);
+ 	output.push(p.MemberSoid);
+ 	output.push(p.PictureRef);
+ 	output.push(p.Fullname);
+ 	output.push(p.Recency);
+ 	output.push(p.Body);
+ 	output.push(p.LikeCount);
+ 	output.push(p.SelfLike); //Whether post liked by the current member
+ 	output.push(p.ReplyCount);
+ 	output.push(p.LastModified);
+ 	output.push("Rockon");
+ 	rockonfeedArray.push(output);
+
+ });
+ return  { posts: rockonfeedArray };
+}
  function GetInitialPosts(req, res) {
      var fbfeeds = '', rockonfeeds = '';
      GetAccessToken(req, res,
 		function (req, res) {
 
-			function feedGetComplete() {
-		    	if ((fb_access_token && fbfeeds == '') || rockonfeeds == '')
-		            return;
-		        var clubbedfeed = [];
-		        var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
-		        var rockonposts = rockonfeeds.posts == undefined?[]:rockonfeeds.posts;
-		        var facebookposts = fbfeeds.posts== undefined ?  []:fbfeeds.posts ;
-
-		        for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
-		            if (clubbedfeed.length >= maxfeeds)
-		                break;
-		            if (rindex < rockonposts.length && findex < facebookposts.length) {
-		            	console.log("comparing date time of rockon and facebook");
-		            	console.log(typeof rockonposts[rindex][9]);
-		            	console.log(typeof facebookposts[findex][9]);
-		            	console.log(rockonposts[rindex][9]+":"+facebookposts[findex][9] );
-		            	if(new Date(rockonposts[rindex][9])> new Date(facebookposts[findex][9])){
-		            	//if (rockonposts[rindex][9] > rockonposts[rindex][9][findex][9]) {
-		            		console.log('adding' + rockonposts[rindex]);
-		            		clubbedfeed.push(rockonposts[rindex++]);
-		                }
-		            	else {
-		            		console.log('adding fb' + facebookposts[findex]);
-		                    clubbedfeed.push(facebookposts[findex++]);
-		                }
-		            }
-		            else if (rindex < rockonposts.length) {
-		                while (clubbedfeed.length < maxfeeds && rindex < rockonposts.length) {
-		                    clubbedfeed.push(rockonposts[rindex++]);
-		                }
-		                break;
-		            }
-		            else if (findex < facebookposts.length) {
-		                while (clubbedfeed.length < maxfeeds && rindex < facebookposts.length) {
-		                    clubbedfeed.push(facebookposts[rindex++]);
-		                }
-		                break;
-		            }
-		            else {
-		                break;
-		            }
-		        }
-
-		        console.log("*******++++++++++++++++++**************");
-		        var groupfeed = {
-		        	posts: clubbedfeed
-		        	
-		        };
-
-		      //  console.log(groupfeed.posts);
-		        var callback = req.query.callback;
-		        if (callback)
-		            res.end(callback + "(" + JSON.stringify(groupfeed) + ")");
-		        else
-		            res.end(JSON.stringify("{}", null, '\t'));
-		    }
+			
 		    //var finished = _.after(2, feedGetComplete);
 		    var sid = req.query.sid;
 		    var sessionid = req.query.sessionid;
@@ -270,26 +288,8 @@ function GetAccessToken(req, res, fun)
 
 		        rockonres.on('end', function () {
 		            console.log(msg);
-		            var rcfeeds = JSON.parse(msg);
-		            var rockonfeedArray = [];
-		            rcfeeds.forEach(function (p) {
-		                var output = [];
-		                output.push(p.Soid);
-		                output.push(p.MemberSoid);
-		                output.push(p.PictureRef);
-		                output.push(p.Fullname);
-		                output.push(p.Recency);
-		                output.push(p.Body);
-		                output.push(p.LikeCount);
-		                output.push(p.SelfLike); //Whether post liked by the current member
-		                output.push(p.ReplyCount);
-		                output.push(p.LastModified);
-		                output.push("Rockon");
-		                rockonfeedArray.push(output);
-
-		            });
-		            rockonfeeds = { posts: rockonfeedArray };
-		            feedGetComplete();
+		            rockonfeeds=  convertrockonfeeds(msg);
+		            feedGetComplete(fbfeeds, rockonfeeds, req, res);
 
 		        });
 		    });
@@ -300,7 +300,7 @@ function GetAccessToken(req, res, fun)
 		    	console.log('GetHome feeds called');
 		    	fbapi.getHomeFeeds(fb_access_token, res, function (feeds) {
 		    		fbfeeds = feeds;
-		    		feedGetComplete();
+		    		feedGetComplete(fbfeeds,rockonfeeds,req,res);
 		    	});
 		    }
 
