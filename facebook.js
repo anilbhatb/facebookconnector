@@ -54,7 +54,6 @@ function getProfile(tokeninfo, response, callback) {
 }
 function getconvertedfacebookfeed(feedArray, maxdate) {
 	var outputFeedArray = [];
-	maxdate = "1/8/2014 6:50:52 AM";
 	console.log("date: "+ maxdate);
 	var objmaxdate =maxdate?  new Date(maxdate):undefined;
 	feedArray.forEach(function (jsonfeed) {
