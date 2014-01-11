@@ -72,7 +72,7 @@ else {
         // Check to ensure user has a valid access_token
         postcontroller.GetAccessToken(req, res, function (req, res) {
             if (postcontroller.fb_access_token) {
-                fbapi.getReplies(oauth.access_token, res, req.query.postid);
+                fbapi.getReplies(postcontroller.fb_access_token, res, req.query.postid);
             } else {
                 console.log("Couldn't confirm that user was authenticated. Redirecting to /");
                 res.redirect('/');
@@ -83,7 +83,7 @@ else {
         // Check to ensure user has a valid access_token
         postcontroller.GetAccessToken(req, res, function (req, res) {
             if (postcontroller.fb_access_token) {
-                fbapi.getLikes(oauth.access_token, res, req.query.postid);
+                fbapi.getLikes(postcontroller.fb_access_token, res, req.query.postid);
             } else {
                 console.log("Couldn't confirm that user was authenticated. Redirecting to /");
                 res.redirect('/');
