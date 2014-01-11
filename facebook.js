@@ -138,8 +138,38 @@ function getconvertedfacebookfeed(feedArray, maxdate) {
 	            console.log("photo status  populated");
 	            outputFeedArray.push(output);
 	        }
-	    }
-
+	        else if (jsonfeed.type == 'photo' && jsonfeed.status_type == 'wall_post') 
+	            output.push(jsonfeed.id);
+	            output.push(jsonfeed.from.id);
+	            output.push("");
+	            output.push(jsonfeed.from.name);
+	            output.push(jsonfeed.updated_time);
+	            // console.log("status parse middle");
+	            var groupmessage = '';
+	            if (jsonfeed.caption)
+	                groupmessage = groupmessage + jsonfeed.caption;
+	            if (jsonfeed.picture)
+	                groupmessage = groupmessage + "link:" + jsonfeed.picture;
+	            if (jsonfeed.story)
+	                groupmessage = groupmessage + jsonfeed.story;
+                if(jsonfeed.message)
+                   groupmesage = groupmessage + jsonfeed.message;
+	            output.push(groupmessage);
+	            if (jsonfeed.likes)
+	                output.push(jsonfeed.likes.data.length);
+	            else
+	                output.push(0);
+	            output.push("");
+	            if (jsonfeed.comments)
+	                output.push(jsonfeed.comments.data.length);
+	            else
+	                output.push(0);
+	            output.push(jsonfeed.updated_time);
+	            output.push("Facebook");
+	            console.log("photo status  populated");
+	            outputFeedArray.push(output);
+	        }
+	    
 	});
     return { posts: outputFeedArray };
 }
