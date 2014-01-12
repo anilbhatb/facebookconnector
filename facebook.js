@@ -52,7 +52,7 @@ function getProfile(tokeninfo, response, callback) {
     });
 
 }
-function getconvertedfacebookfeed(feedArray, maxdate) {
+function getconvertedfacebookfeed(feedArray,response,fun, maxdate) {
 	var outputFeedArray = [];
 	console.log("date: "+ maxdate);
 	var objmaxdate =maxdate?  new Date(maxdate):undefined;
@@ -169,9 +169,15 @@ function getconvertedfacebookfeed(feedArray, maxdate) {
 	            console.log("photo status  populated");
 	            outputFeedArray.push(output);
 	        }
-}	    
+}
 	});
-    return { posts: outputFeedArray };
+	if (fun) {
+	    fun({ posts: outputFeedArray });
+    }
+	else {
+	    response.writeHeader(200, { 'Content-Type': 'application/json' });
+	    response.end(JSON.stringify({ posts: outputFeedArray }, null, '\t'));
+	}
 }
 function getConvertedLikes(likesArray)
 { 
@@ -202,7 +208,7 @@ function getLikes(access_token, response,post_id, fun) {
   var params = {
         access_token: access_token
     };
-  send(url, params, access_token, response, 
+    fbget(url, params, access_token, response, 
 	  function (body) {
 	  	response.writeHeader(200, { 'Content-Type': 'application/json' });
 	  	response.end(JSON.stringify(getConvertedLikes(body.data)));
@@ -214,18 +220,18 @@ function getReplies(access_token, response, post_id, fun) {
         access_token: access_token,
         limit: 100
     };
-    send(url, params, access_token, response,
+    fbget(url, params, access_token, response,
     function (body) {
         response.writeHeader(200, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify(getConvertedReplies(body.data)));
 	});
 }
-function send(url,params, access_token, response, fun) {
+function fbget(url,params, access_token, response, fun) {
     request.get({ url: url, qs: params }, function (err, resp, body) {
         // Handle any errors that occur
         console.log('url' + url);
         if (err) return console.error("Error occured: ", err);
-        body = JSON.parse(body); console.log(body);
+        body = JSON.parse(body); 
         if (body.error) return console.error("Error returned from facebook: ", body.error);
         if (fun) {
             fun(body);
@@ -236,7 +242,7 @@ function send(url,params, access_token, response, fun) {
         }
     });
 }
-function getHomeFeeds(access_token, response, fun,date) {
+function getHomeFeeds(access_token, response, fun,maxdate) {
     // Specify the URL and query string parameters needed for the request
     var url = 'https://graph.facebook.com/me/home';
     var params = {
@@ -244,25 +250,11 @@ function getHomeFeeds(access_token, response, fun,date) {
       //  message: message
     };
     console.log('into home feeds');
-    console.log(date);
-    // Send the request
-    request.get({ url: url, qs: params }, function (err, resp, body) {
-        // Handle any errors that occur
-        if (err) return console.error("Error occured: ", err);
-        body = JSON.parse(body);
-        if (body.error) return console.error("Error returned from facebook: ", body.error);
-        var feedList = {};
-        response.writeHeader(200, { 'Content-Type': 'application/json' });
-        console.log(body.data);
-        var output = getconvertedfacebookfeed(body.data,date);
-        if (fun) {
-            fun(output);
-        }
-        else {
-            response.end(JSON.stringify(output, null, '\t'));
-        }
+    fbget(url, params, access_token, response,
+    function (body) {
+      getconvertedfacebookfeed(body.data,response, fun,maxdate);
     });
-}
+   }
 
 function postfromapplication(access_token,message, response) {
     // Specify the URL and query string parameters needed for the request

@@ -266,3 +266,9 @@ else {
 
     app.listen(8180);
 }
+process.on('uncaughtException', function (err) {
+    console.error('An uncaughtException was found, the program will end.'
+    + err);
+    //hopefully do some logging.
+    process.exit(1);
+});
