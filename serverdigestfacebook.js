@@ -94,7 +94,7 @@ else {
         // Check to ensure user has a valid access_token
         postcontroller.GetAccessToken(req, res, function (req, res) {
             if (postcontroller.fb_access_token) {
-                fbapi.postReplies(postcontroller.fb_access_token, res, req.query.postid);
+                fbapi.postReplies(postcontroller.fb_access_token, res, req.body.postid, req.body.message);
             } else {
                 console.log("Couldn't confirm that user was authenticated. Redirecting to /");
                 res.redirect('/');

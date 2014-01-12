@@ -202,7 +202,7 @@ function getConvertedReplies(replyArray) {
 	});
 	return { replies: outputreply };
 }
-function getLikes(access_token, response,post_id, fun) {
+function getLikes(access_token, response,post_id) {
     console.log('call to get likes');
   var url = 'https://graph.facebook.com/'+post_id+'/likes';
   var params = {
@@ -214,28 +214,21 @@ function getLikes(access_token, response,post_id, fun) {
 	  	response.end(JSON.stringify(getConvertedLikes(body.data)));
 	  });
 }
-function postLikes(access_token, response, post_id, fun) {
-    console.log('call to get likes');
+function postLikes(access_token, response, post_id) {
+    console.log('call to post likes');
     var url = 'https://graph.facebook.com/' + post_id + '/likes';
     var params = {
         access_token: access_token
     };
-    fbpost(url, params, access_token, response,
-	  function (body) {
-	      response.writeHeader(200, { 'Content-Type': 'application/json' });
-	      response.end(body);
-	  });
+    fbpost(url, params, access_token, response);
 }
-function postReplies(access_token, response, post_id, fun) {
+function postReplies(access_token, response, post_id, message) {
     var url = 'https://graph.facebook.com/' + post_id + '/comments';
     var params = {
-        access_token: access_token
+        access_token: access_token,
+        message: message
     };
-    fbpost(url, params, access_token, response,
-    function (body) {
-        response.writeHeader(200, { 'Content-Type': 'application/json' });
-        response.end(body);
-    });
+    fbpost(url, params, access_token, response);
 }
 function getReplies(access_token, response, post_id, fun) {
     var url = 'https://graph.facebook.com/' + post_id + '/comments';
