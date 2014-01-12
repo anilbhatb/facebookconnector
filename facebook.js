@@ -70,7 +70,7 @@ function getconvertedfacebookfeed(feedArray, maxdate) {
 	            output.push("");
 	            //console.log("middle of  mobile status update");
 	            output.push(jsonfeed.from.name);
-	            output.push(jsonfeed.updated_time);
+	            output.push(jsonfeed.created_time);
 	            output.push(jsonfeed.message);
 	            if (jsonfeed.likes)
 	                output.push(jsonfeed.likes.data.length);
@@ -92,7 +92,7 @@ function getconvertedfacebookfeed(feedArray, maxdate) {
 	            output.push(jsonfeed.from.id);
 	            output.push("");
 	            output.push(jsonfeed.from.name);
-	            output.push(jsonfeed.updated_time);
+	            output.push(jsonfeed.created_time);
 	            // console.log("status parse middle");
 	            output.push(jsonfeed.story);
 	            if (jsonfeed.likes)
@@ -114,7 +114,7 @@ function getconvertedfacebookfeed(feedArray, maxdate) {
 	            output.push(jsonfeed.from.id);
 	            output.push("");
 	            output.push(jsonfeed.from.name);
-	            output.push(jsonfeed.updated_time);
+	            output.push(jsonfeed.created_time);
 	            // console.log("status parse middle");
 	            var groupmessage = '';
 	            if (jsonfeed.caption)
@@ -143,7 +143,7 @@ function getconvertedfacebookfeed(feedArray, maxdate) {
 	            output.push(jsonfeed.from.id);
 	            output.push("");
 	            output.push(jsonfeed.from.name);
-	            output.push(jsonfeed.updated_time);
+	            output.push(jsonfeed.created_time);
 	            // console.log("status parse middle");
 	            var groupmessage = '';
 	            if (jsonfeed.caption)
@@ -182,11 +182,19 @@ function getConvertedLikes(likesArray)
 	return {members:outputlikes };
 }
 function getConvertedReplies(replyArray) {
-	var outputreply = [];
+    var outputreply = [];
+    var replycount =replyArray.length;
 	replyArray.forEach(function (objreply) {
-		outputreply.push(objreply.name);
+	    var output = [];
+	    output.push(objreply.id);
+	    output.push(objreply.from.id);
+	    output.push("");
+	    output.push(objreply.from.name);
+	    output.push(objreply.created_time);
+	    output.push("reply no: " + replycount--);
+	    outputreply.push(output);
 	});
-	return { data: outputreply };
+	return { replies: outputreply };
 }
 function getLikes(access_token, response,post_id, fun) {
     console.log('call to get likes');
@@ -245,12 +253,13 @@ function getHomeFeeds(access_token, response, fun,date) {
         if (body.error) return console.error("Error returned from facebook: ", body.error);
         var feedList = {};
         response.writeHeader(200, { 'Content-Type': 'application/json' });
+        console.log(body.data);
         var output = getconvertedfacebookfeed(body.data,date);
         if (fun) {
             fun(output);
         }
         else {
-            response.end(JSON.stringify(body, null, '\t'));
+            response.end(JSON.stringify(output, null, '\t'));
         }
     });
 }

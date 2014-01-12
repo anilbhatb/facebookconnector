@@ -171,12 +171,12 @@
               //  alert(response.data[0]);
                 var jsonobject = JSON.stringify(response.data);
                
-                for(var i=0;i< response.data.length;i++)
-                {
+                for(var i=0;i< response.posts.length;i++) {
+                alert(response.posts[i].length);
                 jQuery('<textarea/>', {
     id: 'foo' +i,
-   rows:5,
-   html:JSON.stringify(response.data[i])
+   rows:50,
+   html:JSON.stringify(response.posts[i])
 }).appendTo('#Homefeeds');
                 }
           //      $('#homefeeds').html(jsonobject);
