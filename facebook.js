@@ -214,6 +214,29 @@ function getLikes(access_token, response,post_id, fun) {
 	  	response.end(JSON.stringify(getConvertedLikes(body.data)));
 	  });
 }
+function postLikes(access_token, response, post_id, fun) {
+    console.log('call to get likes');
+    var url = 'https://graph.facebook.com/' + post_id + '/likes';
+    var params = {
+        access_token: access_token
+    };
+    fbpost(url, params, access_token, response,
+	  function (body) {
+	      response.writeHeader(200, { 'Content-Type': 'application/json' });
+	      response.end(body);
+	  });
+}
+function postReplies(access_token, response, post_id, fun) {
+    var url = 'https://graph.facebook.com/' + post_id + '/comments';
+    var params = {
+        access_token: access_token
+    };
+    fbpost(url, params, access_token, response,
+    function (body) {
+        response.writeHeader(200, { 'Content-Type': 'application/json' });
+        response.end(body);
+    });
+}
 function getReplies(access_token, response, post_id, fun) {
     var url = 'https://graph.facebook.com/' + post_id + '/comments';
     var params = {
@@ -242,6 +265,22 @@ function fbget(url,params, access_token, response, fun) {
         }
     });
 }
+function fbpost(url, params, access_token, response, fun) {
+    request.post({ url: url, qs: params }, function (err, resp, body) {
+        // Handle any errors that occur
+        console.log('url' + url);
+        if (err) return console.error("Error occured: ", err);
+        body = JSON.parse(body);
+        if (body.error) return console.error("Error returned from facebook: ", body.error);
+        if (fun) {
+            fun(body);
+        }
+        else {
+            response.writeHeader(200, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify(body, null, '\t'));
+        }
+    });
+}
 function getHomeFeeds(access_token, response, fun,maxdate) {
     // Specify the URL and query string parameters needed for the request
     var url = 'https://graph.facebook.com/me/home';
@@ -255,7 +294,6 @@ function getHomeFeeds(access_token, response, fun,maxdate) {
       getconvertedfacebookfeed(body.data,response, fun,maxdate);
     });
    }
-
 function postfromapplication(access_token,message, response) {
     // Specify the URL and query string parameters needed for the request
     var url = 'https://graph.facebook.com/100005623991718/feed';

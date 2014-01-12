@@ -90,6 +90,28 @@ else {
             }
         });
     });
+    app.post('/fbpostReplies', function (req, res) {
+        // Check to ensure user has a valid access_token
+        postcontroller.GetAccessToken(req, res, function (req, res) {
+            if (postcontroller.fb_access_token) {
+                fbapi.postReplies(postcontroller.fb_access_token, res, req.query.postid);
+            } else {
+                console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+                res.redirect('/');
+            }
+        });
+    });
+    app.post('/fbpostLikes', function (req, res) {
+        // Check to ensure user has a valid access_token
+        postcontroller.GetAccessToken(req, res, function (req, res) {
+            if (postcontroller.fb_access_token) {
+                fbapi.postLikes(postcontroller.fb_access_token, res, req.query.postid);
+            } else {
+                console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+                res.redirect('/');
+            }
+        });
+    });
     app.get('/fbhome', function (req, res) {
         // Check to ensure user has a valid access_token
         if (oauth.access_token) {
@@ -238,11 +260,6 @@ else {
     });
 
 
-    //app.get('/callback', 
-    // passport.authenticate('facebook', { failureRedirect: '/login' }),
-    // function(req, res) {
-    //  res.redirect('/');
-    // });
     // Routes for OAuth calls
     app.post('/postcontroller/GetPost', postcontroller.GetPost);
     app.post('/postcontroller/GetPostsOnScroll', postcontroller.GetPostsOnScroll);
