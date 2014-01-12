@@ -1,6 +1,7 @@
 
 var http = require('http')
-	, fbapi = require('./facebook');
+	, fbapi = require('./facebook')
+    , utils = require('util');
 var rockonurl = 'localhost';
 var rockonport = '57652';
 var fb_access_token;
@@ -159,7 +160,8 @@ function GetAccessToken(req, res, fun)
 				});
 
 				rockonres.on('error', function (err) {
-					console.log(err);
+				    console.log(err);
+				    rockonfeeds = { posts: [] };
 				});
 				rockonres.on('end', function () {
 					 rockonfeeds = convertrockonfeeds(strfeeds);
@@ -178,61 +180,71 @@ function GetAccessToken(req, res, fun)
 		});
  }
  function feedGetComplete(fbfeeds,rockonfeeds,req, res) {
- 	if ((fb_access_token && fbfeeds == '') || rockonfeeds == '')
- 		return;
- 	var clubbedfeed = [];
- 	var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
- 	var rockonposts = rockonfeeds.posts == undefined ? [] : rockonfeeds.posts;
- 	var facebookposts = fbfeeds.posts == undefined ? [] : fbfeeds.posts;
+     var groupfeed;
+     try {
+         if ((fb_access_token && fbfeeds == '') || rockonfeeds == '')
+             return;
+         var clubbedfeed = [];
+         var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
+         var rockonposts = rockonfeeds.posts == undefined ? [] : rockonfeeds.posts;
+         var facebookposts = fbfeeds.posts == undefined ? [] : fbfeeds.posts;
 
- 	for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
- 		if (clubbedfeed.length >= maxfeeds)
- 			break;
- 		if (rindex < rockonposts.length && findex < facebookposts.length) {
- 			if (new Date(rockonposts[rindex][9]) > new Date(facebookposts[findex][9])) {
- 				//if (rockonposts[rindex][9] > rockonposts[rindex][9][findex][9]) {
- 			//	console.log('adding' + rockonposts[rindex]);
- 				clubbedfeed.push(rockonposts[rindex++]);
- 			}
- 			else {
- 				//console.log('adding fb' + facebookposts[findex]);
- 				clubbedfeed.push(facebookposts[findex++]);
- 			}
- 		}
- 		else if (rindex < rockonposts.length) {
- 			while (clubbedfeed.length < maxfeeds && rindex < rockonposts.length) {
- 				clubbedfeed.push(rockonposts[rindex++]);
- 			}
- 			break;
- 		}
- 		else if (findex < facebookposts.length) {
- 			while (clubbedfeed.length < maxfeeds && rindex < facebookposts.length) {
- 				clubbedfeed.push(facebookposts[rindex++]);
- 			}
- 			break;
- 		}
- 		else {
- 			break;
- 		}
- 	}
+         for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
+             if (clubbedfeed.length >= maxfeeds)
+                 break;
+             if (rindex < rockonposts.length && findex < facebookposts.length) {
+                 if (new Date(rockonposts[rindex][9]) > new Date(facebookposts[findex][9])) {
+                     //if (rockonposts[rindex][9] > rockonposts[rindex][9][findex][9]) {
+                     //	console.log('adding' + rockonposts[rindex]);
+                     clubbedfeed.push(rockonposts[rindex++]);
+                 }
+                 else {
+                     //console.log('adding fb' + facebookposts[findex]);
+                     clubbedfeed.push(facebookposts[findex++]);
+                 }
+             }
+             else if (rindex < rockonposts.length) {
+                 while (clubbedfeed.length < maxfeeds && rindex < rockonposts.length) {
+                     clubbedfeed.push(rockonposts[rindex++]);
+                 }
+                 break;
+             }
+             else if (findex < facebookposts.length) {
+                 while (clubbedfeed.length < maxfeeds && rindex < facebookposts.length) {
+                     clubbedfeed.push(facebookposts[rindex++]);
+                 }
+                 break;
+             }
+             else {
+                 break;
+             }
+         }
 
- 	console.log("*******++++++++++++++++++**************");
- 	var groupfeed = {
- 		posts: clubbedfeed
+         console.log("*******++++++++++++++++++**************");
+          groupfeed = {
+             posts: clubbedfeed
 
- 	};
-
+         };
+     }
+     catch (e) {
+         groupfeed = {posts:[]};
+     }     
  	//  console.log(groupfeed.posts);
  	var callback = req.query.callback;
  	if (callback)
  		res.end(callback + "(" + JSON.stringify(groupfeed) + ")");
  	else
- 		res.end(JSON.stringify("{}", null, '\t'));
+ 	    res.end(JSON.stringify(groupfeed, null, '\t'));
+
  }
  function convertrockonfeeds(msg){
-	var rcfeeds = JSON.parse(msg);
+	try{
+    var rcfeeds = JSON.parse(msg);
 	var rockonfeedArray = [];
-	rcfeeds.forEach(function (p) {
+	if (!util.isArray(rcfeeds)) {
+	    return { posts:[]};
+    }
+    rcfeeds.forEach(function (p) {
  	var output = [];
  	output.push(p.Soid);
  	output.push(p.MemberSoid);
@@ -246,18 +258,19 @@ function GetAccessToken(req, res, fun)
  	output.push(p.LastModified);
  	output.push("Rockon");
  	rockonfeedArray.push(output);
-
  });
  return  { posts: rockonfeedArray };
+}
+catch (e) {
+    console.log(e);
+    return { posts: [] };
+}
 }
  function GetInitialPosts(req, res) {
      var fbfeeds = '', rockonfeeds = '';
      GetAccessToken(req, res,
 		function (req, res) {
-
-			
-		    //var finished = _.after(2, feedGetComplete);
-		    var sid = req.query.sid;
+    	    var sid = req.query.sid;
 		    var sessionid = req.query.sessionid;
 		    //console.log('validate being called');
 		    var options = {
@@ -272,8 +285,7 @@ function GetAccessToken(req, res, fun)
 		            'rockonconnector': "secretRockonCode",
 		            'sid': sid,
 		            'sessionid': sessionid
-
-		        }
+                }
 		    };
 		    var rockonreq = http.request(options, function (rockonres) {
 		        var msg = '';
@@ -284,6 +296,7 @@ function GetAccessToken(req, res, fun)
 
 		        rockonres.on('error', function (err) {
 		            console.log(err);
+		            rockonfeeds = { posts: [] };
 		        });
 
 		        rockonres.on('end', function () {
@@ -303,7 +316,6 @@ function GetAccessToken(req, res, fun)
 		    		feedGetComplete(fbfeeds,rockonfeeds,req,res);
 		    	});
 		    }
-
 
 		});
  }

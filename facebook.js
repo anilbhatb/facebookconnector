@@ -53,131 +53,143 @@ function getProfile(tokeninfo, response, callback) {
 
 }
 function getconvertedfacebookfeed(feedArray,response,fun, maxdate) {
-	var outputFeedArray = [];
-	console.log("date: "+ maxdate);
-	var objmaxdate =maxdate?  new Date(maxdate):undefined;
-	feedArray.forEach(function (jsonfeed) {
-	    //   var inputfeed = $("#inputfeed").val();
-	    var output = [];
-	    if (objmaxdate != undefined
+    try {
+        var outputFeedArray = [];
+        console.log("date: " + maxdate);
+        var objmaxdate = maxdate ? new Date(maxdate) : undefined;
+        feedArray.forEach(function (jsonfeed) {
+            //   var inputfeed = $("#inputfeed").val();
+            var output = [];
+            if (objmaxdate != undefined
 		 && new Date(jsonfeed.updated_time) >= objmaxdate) {
-	        console.log(jsonfeed.updated_time + "does not match the criteria ")
-	    }
-	    else {
-	        if (jsonfeed.status_type == 'mobile_status_update'  || (jsonfeed.type == 'status' && jsonfeed.status_type == 'wall_post')) {
-	            output.push(jsonfeed.id);
-	            output.push(jsonfeed.from.id);
-	            output.push("");
-	            //console.log("middle of  mobile status update");
-	            output.push(jsonfeed.from.name);
-	            output.push(jsonfeed.created_time);
-	            output.push(jsonfeed.message);
-	            if (jsonfeed.likes)
-	                output.push(jsonfeed.likes.data.length);
-	            else
-	                output.push(0);
-	            output.push("");
-	            if (jsonfeed.comments)
-	                output.push(jsonfeed.comments.data.length);
-	            else
-	                output.push(0);
-	            output.push(jsonfeed.updated_time);
-	            output.push("Facebook");
-	            ///console.log("mobile status populated");
-	            outputFeedArray.push(output);
-	        }
-	        else if (jsonfeed.type == 'status' && jsonfeed.status_type == undefined) {
-	            //console.log("status parse begin");
-	            output.push(jsonfeed.id);
-	            output.push(jsonfeed.from.id);
-	            output.push("");
-	            output.push(jsonfeed.from.name);
-	            output.push(jsonfeed.created_time);
-	            // console.log("status parse middle");
-	            output.push(jsonfeed.story);
-	            if (jsonfeed.likes)
-	                output.push(jsonfeed.likes.data.length);
-	            else
-	                output.push(0);
-	            output.push("");
-	            if (jsonfeed.comments)
-	                output.push(jsonfeed.comments.data.length);
-	            else
-	                output.push(0);
-	            output.push(jsonfeed.updated_time);
-	            output.push("Facebook");
-	            // console.log("status  populated");
-	            outputFeedArray.push(output);
-	        }
-	        else if ((jsonfeed.type == 'photo' && jsonfeed.status_type == 'shared_story') || (jsonfeed.type == 'photo' && jsonfeed.status_type == 'added_photos') || (jsonfeed.type == 'photo' && jsonfeed.status_type == 'added_photos')) {
-	            output.push(jsonfeed.id);
-	            output.push(jsonfeed.from.id);
-	            output.push("");
-	            output.push(jsonfeed.from.name);
-	            output.push(jsonfeed.created_time);
-	            // console.log("status parse middle");
-	            var groupmessage = '';
-	            if (jsonfeed.caption)
-	                groupmessage = groupmessage + jsonfeed.caption;
-	            if (jsonfeed.picture)
-	                groupmessage = groupmessage + "link:" + jsonfeed.picture;
-	            if (jsonfeed.story)
-	                groupmessage = groupmessage + jsonfeed.story;
-	            output.push(groupmessage);
-	            if (jsonfeed.likes)
-	                output.push(jsonfeed.likes.data.length);
-	            else
-	                output.push(0);
-	            output.push("");
-	            if (jsonfeed.comments)
-	                output.push(jsonfeed.comments.data.length);
-	            else
-	                output.push(0);
-	            output.push(jsonfeed.updated_time);
-	            output.push("Facebook");
-	            console.log("photo status  populated");
-	            outputFeedArray.push(output);
-	        }
-	        else if (jsonfeed.type == 'photo' && jsonfeed.status_type == 'wall_post') {	
-                output.push(jsonfeed.id);
-	            output.push(jsonfeed.from.id);
-	            output.push("");
-	            output.push(jsonfeed.from.name);
-	            output.push(jsonfeed.created_time);
-	            // console.log("status parse middle");
-	            var groupmessage = '';
-	            if (jsonfeed.caption)
-	                groupmessage = groupmessage + jsonfeed.caption;
-	            if (jsonfeed.picture)
-	                groupmessage = groupmessage + "link:" + jsonfeed.picture;
-	            if (jsonfeed.story)
-	                groupmessage = groupmessage + jsonfeed.story;
-                if(jsonfeed.message)
-                   groupmesage = groupmessage + jsonfeed.message;
-	            output.push(groupmessage);
-	            if (jsonfeed.likes)
-	                output.push(jsonfeed.likes.data.length);
-	            else
-	                output.push(0);
-	            output.push("");
-	            if (jsonfeed.comments)
-	                output.push(jsonfeed.comments.data.length);
-	            else
-	                output.push(0);
-	            output.push(jsonfeed.updated_time);
-	            output.push("Facebook");
-	            console.log("photo status  populated");
-	            outputFeedArray.push(output);
-	        }
-}
-	});
-	if (fun) {
-	    fun({ posts: outputFeedArray });
+                console.log(jsonfeed.updated_time + "does not match the criteria ")
+            }
+            else {
+                if (jsonfeed.status_type == 'mobile_status_update' || (jsonfeed.type == 'status' && jsonfeed.status_type == 'wall_post')) {
+                    output.push(jsonfeed.id);
+                    output.push(jsonfeed.from.id);
+                    output.push("");
+                    //console.log("middle of  mobile status update");
+                    output.push(jsonfeed.from.name);
+                    output.push(jsonfeed.created_time);
+                    output.push(jsonfeed.message);
+                    if (jsonfeed.likes)
+                        output.push(jsonfeed.likes.data.length);
+                    else
+                        output.push(0);
+                    output.push("");
+                    if (jsonfeed.comments)
+                        output.push(jsonfeed.comments.data.length);
+                    else
+                        output.push(0);
+                    output.push(jsonfeed.updated_time);
+                    output.push("Facebook");
+                    ///console.log("mobile status populated");
+                    outputFeedArray.push(output);
+                }
+                else if (jsonfeed.type == 'status' && jsonfeed.status_type == undefined) {
+                    //console.log("status parse begin");
+                    output.push(jsonfeed.id);
+                    output.push(jsonfeed.from.id);
+                    output.push("");
+                    output.push(jsonfeed.from.name);
+                    output.push(jsonfeed.created_time);
+                    // console.log("status parse middle");
+                    output.push(jsonfeed.story);
+                    if (jsonfeed.likes)
+                        output.push(jsonfeed.likes.data.length);
+                    else
+                        output.push(0);
+                    output.push("");
+                    if (jsonfeed.comments)
+                        output.push(jsonfeed.comments.data.length);
+                    else
+                        output.push(0);
+                    output.push(jsonfeed.updated_time);
+                    output.push("Facebook");
+                    // console.log("status  populated");
+                    outputFeedArray.push(output);
+                }
+                else if ((jsonfeed.type == 'photo' && jsonfeed.status_type == 'shared_story') || (jsonfeed.type == 'photo' && jsonfeed.status_type == 'added_photos') || (jsonfeed.type == 'photo' && jsonfeed.status_type == 'added_photos')) {
+                    output.push(jsonfeed.id);
+                    output.push(jsonfeed.from.id);
+                    output.push("");
+                    output.push(jsonfeed.from.name);
+                    output.push(jsonfeed.created_time);
+                    // console.log("status parse middle");
+                    var groupmessage = '';
+                    if (jsonfeed.caption)
+                        groupmessage = groupmessage + jsonfeed.caption;
+                    if (jsonfeed.picture)
+                        groupmessage = groupmessage + "link:" + jsonfeed.picture;
+                    if (jsonfeed.story)
+                        groupmessage = groupmessage + jsonfeed.story;
+                    output.push(groupmessage);
+                    if (jsonfeed.likes)
+                        output.push(jsonfeed.likes.data.length);
+                    else
+                        output.push(0);
+                    output.push("");
+                    if (jsonfeed.comments)
+                        output.push(jsonfeed.comments.data.length);
+                    else
+                        output.push(0);
+                    output.push(jsonfeed.updated_time);
+                    output.push("Facebook");
+                    console.log("photo status  populated");
+                    outputFeedArray.push(output);
+                }
+                else if (jsonfeed.type == 'photo' && jsonfeed.status_type == 'wall_post') {
+                    output.push(jsonfeed.id);
+                    output.push(jsonfeed.from.id);
+                    output.push("");
+                    output.push(jsonfeed.from.name);
+                    output.push(jsonfeed.created_time);
+                    // console.log("status parse middle");
+                    var groupmessage = '';
+                    if (jsonfeed.caption)
+                        groupmessage = groupmessage + jsonfeed.caption;
+                    if (jsonfeed.picture)
+                        groupmessage = groupmessage + "link:" + jsonfeed.picture;
+                    if (jsonfeed.story)
+                        groupmessage = groupmessage + jsonfeed.story;
+                    if (jsonfeed.message)
+                        groupmesage = groupmessage + jsonfeed.message;
+                    output.push(groupmessage);
+                    if (jsonfeed.likes)
+                        output.push(jsonfeed.likes.data.length);
+                    else
+                        output.push(0);
+                    output.push("");
+                    if (jsonfeed.comments)
+                        output.push(jsonfeed.comments.data.length);
+                    else
+                        output.push(0);
+                    output.push(jsonfeed.updated_time);
+                    output.push("Facebook");
+                    console.log("photo status  populated");
+                    outputFeedArray.push(output);
+                }
+            }
+        });
+        if (fun) {
+            fun({ posts: outputFeedArray });
+        }
+        else {
+            response.writeHeader(200, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify({ posts: outputFeedArray }, null, '\t'));
+        }
     }
-	else {
-	    response.writeHeader(200, { 'Content-Type': 'application/json' });
-	    response.end(JSON.stringify({ posts: outputFeedArray }, null, '\t'));
-	}
+    catch (e) {
+        console.log(e);
+        if (fun) {
+            fun({ posts: [] });
+        }
+        else {
+            response.writeHeader(200, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify({ posts: [] }, null, '\t'));
+        }
+    }
 }
 function getConvertedLikes(likesArray)
 { 
@@ -276,16 +288,22 @@ function fbpost(url, params, access_token, response, fun) {
 }
 function getHomeFeeds(access_token, response, fun,maxdate) {
     // Specify the URL and query string parameters needed for the request
-    var url = 'https://graph.facebook.com/me/home';
-    var params = {
-        access_token: access_token
-      //  message: message
-    };
-    console.log('into home feeds');
-    fbget(url, params, access_token, response,
+    try {
+        var url = 'https://graph.facebook.com/me/home';
+        var params = {
+            access_token: access_token
+            //  message: message
+        };
+        console.log('into home feeds');
+        fbget(url, params, access_token, response,
     function (body) {
-      getconvertedfacebookfeed(body.data,response, fun,maxdate);
+        getconvertedfacebookfeed(body.data, response, fun, maxdate);
     });
+    } 
+    catch (e) {
+        console.log(e);
+
+    }
    }
 function postfromapplication(access_token,message, response) {
     // Specify the URL and query string parameters needed for the request
