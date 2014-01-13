@@ -71,6 +71,8 @@ function GetAccessToken(req, res, fun) {
 	rockonreq.end();
 }
 function GetPost(req, res) {
+    fb_access_token = undefined;
+    exports.fb_access_token = undefined;
 	GetAccessToken(req, res,
 		   function (req, res) {
 		   	var sid = req.query.sid;
@@ -123,7 +125,9 @@ function GetPost(req, res) {
 		   });
 }
 function GetPostsOnScroll(req, res) {
-	var fbfeeds = '', rockonfeeds = '';
+    fb_access_token = undefined;
+    exports.fb_access_token = undefined;
+    var fbfeeds = '', rockonfeeds = '';
 	GetAccessToken(req, res,
 		   function (req, res) {
 		   	var sid = req.query.sid;
@@ -264,7 +268,9 @@ function convertrockonfeeds(msg) {
 	}
 }
 function GetInitialPosts(req, res) {
-	var fbfeeds = '', rockonfeeds = '';
+    var fbfeeds = '', rockonfeeds = '';
+    fb_access_token = undefined;
+    exports.fb_access_token = undefined;
 	GetAccessToken(req, res,
 			   function (req, res) {
 			   	var sid = req.query.sid;
