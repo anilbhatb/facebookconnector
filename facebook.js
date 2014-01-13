@@ -250,20 +250,28 @@ function getReplies(access_token, response, post_id, fun) {
     });
 }
 function fbget(url, params, access_token, response, fun) {
-	request.get({ url: url, qs: params }, function (err, resp, body) {
-		// Handle any errors that occur
-		console.log('url' + url);
-		if (err) return console.error("Error occured: ", err);
-		body = JSON.parse(body);
-		if (body.error) return console.error("Error returned from facebook: ", body.error);
-		if (fun) {
-			fun(body);
-		}
-		else {
-			response.writeHeader(200, { 'Content-Type': 'application/json' });
-			response.end(JSON.stringify(body, null, '\t'));
-		}
-	});
+    request.get({ url: url, qs: params }, function (err, resp, body) {
+        // Handle any errors that occur
+        console.log('url' + url);
+        if (err) {
+            console.error("Error occured: ", err);
+            response.writeHeader(500, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify(err, null, '\t'));
+         }
+        body = JSON.parse(body);
+        if (body.error) {
+            console.error("Error returned from facebook: ", body.error);
+            response.writeHeader(500, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify(body, null, '\t'));
+           }
+        if (fun) {
+            fun(body);
+        }
+        else {
+            response.writeHeader(200, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify(body, null, '\t'));
+        }
+    });
 }
 function fbpost(url, params, access_token, response, fun) {
 	request.post({ url: url, qs: params }, function (err, resp, body) {
