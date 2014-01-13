@@ -257,13 +257,15 @@ function fbget(url, params, access_token, response, fun) {
             console.error("Error occured: ", err);
             response.writeHeader(500, { 'Content-Type': 'application/json' });
             response.end(JSON.stringify(err, null, '\t'));
-         }
+            return;
+        }
         body = JSON.parse(body);
         if (body.error) {
             console.error("Error returned from facebook: ", body.error);
             response.writeHeader(500, { 'Content-Type': 'application/json' });
             response.end(JSON.stringify(body, null, '\t'));
-           }
+            return;
+        }
         if (fun) {
             fun(body);
         }
