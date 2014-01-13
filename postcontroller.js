@@ -7,7 +7,10 @@ var fb_access_token;
 var fb_expires;
 
 function GetAccessToken(req, res, fun) {
-	console.log('getaccess token being called');
+    fb_access_token = undefined;
+    exports.fb_access_token = undefined;
+	
+    console.log('getaccess token being called');
 	var sid = req.query.sid == undefined ? req.body.sid : req.query.sid;
 	var sessionid = req.query.sessionid == undefined ? req.body.sessionid : req.query.sessionid;
 	//var postdata = JSON.stringify({
