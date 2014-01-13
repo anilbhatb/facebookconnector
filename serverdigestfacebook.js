@@ -262,7 +262,7 @@ else {
 
     // Routes for OAuth calls
     app.post('/postcontroller/GetPost', postcontroller.GetPost);
-    app.post('/postcontroller/GetPostsOnScroll', postcontroller.GetPostsOnScroll);
+    app.get('/postcontroller/GetPostsOnScroll', postcontroller.GetPostsOnScroll);
     app.get('/postcontroller/GetInitialPosts', postcontroller.GetInitialPosts);
     app.get('/login', oauth.login);
     app.get('/appposttouser', oauth.getapplicationAuthtoken);

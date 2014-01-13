@@ -135,7 +135,7 @@ function GetAccessToken(req, res, fun)
 			var sid = req.query.sid;
 			var sessionid = req.query.sessionid;
 			var postdata = JSON.stringify({
-				'soid': req.body.soid, 'date': req.body.date
+				'soid': req.query.soid, 'date': req.query.date
 			});
 			var options = {
 				host: rockonurl,
