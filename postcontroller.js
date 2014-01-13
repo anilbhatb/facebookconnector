@@ -1,8 +1,10 @@
 var http = require('http')
         , fbapi = require('./facebook')
     , utils = require('util');
-var rockonurl = 'localhost';
-var rockonport = '49785';
+var rockonurl = '192.168.6.190';
+var rockonport = '80';
+//var rockonurl = 'localhost';
+//var rockonport = '49785';
 var fb_access_token;
 var fb_expires;
 

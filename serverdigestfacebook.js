@@ -8,12 +8,12 @@ if (cluster.isMaster) {
 	});
 }
 else {
-	global.FACEBOOK_APP_ID = "236299956516217"
-	global.FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
-	global.CONNECTOR_URL = "localhost:8180";
-	//global.FACEBOOK_APP_ID = "363685873749093"
-	//global.FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
-	//global.CONNECTOR_URL = "192.168.6.148:8180";
+	//global.FACEBOOK_APP_ID = "236299956516217"
+	//global.FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
+	//global.CONNECTOR_URL = "localhost:8180";
+	global.FACEBOOK_APP_ID = "363685873749093"
+	global.FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
+	global.CONNECTOR_URL = "192.168.6.148:8180";
 
 	var express = require('express')
   , fbapi = require('./facebook')
