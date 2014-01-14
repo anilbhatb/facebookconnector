@@ -245,8 +245,7 @@ else {
 	app.get('/logout', function (req, res) {
 		req.session.destroy(function (err) {
 			res.redirect('/'); //Inside a callback
- bulletproof!
-		});
+ 		});
 		//  res.redirect('/');
 	});
 
