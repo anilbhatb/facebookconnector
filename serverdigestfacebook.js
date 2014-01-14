@@ -44,11 +44,11 @@ else {
 	app.post('/fbpostfromuser', function (req, res) {
 		// Check to ensure user has a valid access_token
 		//if (oauth.access_token) {
-		postcontroller.GetAccessToken(req, res, function (req, res) {
-			if (postcontroller.fb_access_token) {
+		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+			if (fb_access_token) {
 				// Call function that contains API call to post on Facebook (see facebook.js)
 
-				fbapi.postMessage(postcontroller.fb_access_token, req.body.message, res);
+				fbapi.postMessage(fb_access_token, req.body.message, res);
 			} else {
 				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
@@ -67,9 +67,9 @@ else {
 	});
 	app.get('/fbgetReplies', function (req, res) {
 		// Check to ensure user has a valid access_token
-		postcontroller.GetAccessToken(req, res, function (req, res) {
-			if (postcontroller.fb_access_token) {
-				fbapi.getReplies(postcontroller.fb_access_token, res, req.query.postid);
+		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+			if (fb_access_token) {
+				fbapi.getReplies(fb_access_token, res, req.query.postid);
 			} else {
 				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
@@ -78,9 +78,9 @@ else {
 	});
 	app.get('/fbgetLikes', function (req, res) {
 		// Check to ensure user has a valid access_token
-		postcontroller.GetAccessToken(req, res, function (req, res) {
-			if (postcontroller.fb_access_token) {
-				fbapi.getLikes(postcontroller.fb_access_token, res, req.query.postid);
+		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+			if (fb_access_token) {
+				fbapi.getLikes(fb_access_token, res, req.query.postid);
 			} else {
 				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
@@ -89,9 +89,9 @@ else {
 	});
 	app.post('/fbpostReplies', function (req, res) {
 		// Check to ensure user has a valid access_token
-		postcontroller.GetAccessToken(req, res, function (req, res) {
-			if (postcontroller.fb_access_token) {
-				fbapi.postReplies(postcontroller.fb_access_token, res, req.body.postid, req.body.message);
+		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+			if (fb_access_token) {
+				fbapi.postReplies(fb_access_token, res, req.body.postid, req.body.message);
 			} else {
 				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
@@ -100,9 +100,9 @@ else {
 	});
 	app.post('/fbpostLikes', function (req, res) {
 		// Check to ensure user has a valid access_token
-		postcontroller.GetAccessToken(req, res, function (req, res) {
-			if (postcontroller.fb_access_token) {
-				fbapi.postLikes(postcontroller.fb_access_token, res, req.query.postid);
+		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+			if (fb_access_token) {
+				fbapi.postLikes(fb_access_token, res, req.query.postid);
 			} else {
 				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
@@ -244,7 +244,8 @@ else {
 
 	app.get('/logout', function (req, res) {
 		req.session.destroy(function (err) {
-			res.redirect('/'); //Inside a callback bulletproof!
+			res.redirect('/'); //Inside a callback
+ bulletproof!
 		});
 		//  res.redirect('/');
 	});

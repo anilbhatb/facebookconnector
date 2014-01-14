@@ -10,18 +10,28 @@ function postMessage(access_token, message, response) {
 
 	// Send the request
 	request.post({ url: url, qs: params }, function (err, resp, body) {
-		// Handle any errors that occur
-		if (err) return console.error("Error occured: ", err);
-		body = JSON.parse(body);
-		if (body.error) return console.error("Error returned from facebook: ", body.error);
+	    // Handle any errors that occur
+	    if (err) {
+	        console.error("Error occured: ", err);
+	        response.writeHeader(500, { 'Content-Type': 'application/json' });
+	        response.end(JSON.stringify({error:"<error>" + err + "<error>"}));
+	        return;
+	    }
+	    body = JSON.parse(body);
+	    if (body.error) {
+	        console.error("Error returned from facebook: ", body.error);
+	        response.writeHeader(500, { 'Content-Type': 'application/json' });
+	        response.end(JSON.stringify(body, null, '\t'));
+            return;
+	    }
 
-		// Generate output
-		var output = '<p>Message has been posted to your feed. Here is the id generated:</p>';
-		output += '<pre>' + JSON.stringify(body, null, '\t') + '</pre>';
+	    // Generate output
+	    var output = '<p>Message has been posted to your feed. Here is the id generated:</p>';
+	    output += '<pre>' + JSON.stringify(body, null, '\t') + '</pre>';
 
-		// Send output as the response
-		response.writeHeader(200, { 'Content-Type': 'text/html' });
-		response.end(output);
+	    // Send output as the response
+	    response.writeHeader(200, { 'Content-Type': 'application/json' });
+	    response.end(output);
 	});
 }
 function getProfile(tokeninfo, response, callback) {
@@ -58,14 +68,12 @@ function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {
 			var output = [];
 			if (objmaxdate != undefined
                  && new Date(jsonfeed.updated_time) >= objmaxdate) {
-				console.log(jsonfeed.updated_time + "does not match the criteria ")
 			}
 			else {
 				if (jsonfeed.status_type == 'mobile_status_update' || (jsonfeed.type == 'status' && jsonfeed.status_type == 'wall_post')) {
 					output.push(jsonfeed.id);
 					output.push(jsonfeed.from.id);
 					output.push("");
-					//console.log("middle of  mobile status update");
 					output.push(jsonfeed.from.name);
 					output.push(jsonfeed.created_time);
 					output.push(jsonfeed.message);
@@ -80,11 +88,9 @@ function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {
 						output.push(0);
 					output.push(jsonfeed.updated_time);
 					output.push("Facebook");
-					///console.log("mobile status populated");
-					outputFeedArray.push(output);
+    				outputFeedArray.push(output);
 				}
 				else if (jsonfeed.type == 'status' && jsonfeed.status_type == undefined) {
-					//console.log("status parse begin");
 					output.push(jsonfeed.id);
 					output.push(jsonfeed.from.id);
 					output.push("");
@@ -132,7 +138,6 @@ function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {
 						output.push(0);
 					output.push(jsonfeed.updated_time);
 					output.push("Facebook");
-					console.log("photo status  populated");
 					outputFeedArray.push(output);
 				}
 				else if (jsonfeed.type == 'photo' && jsonfeed.status_type == 'wall_post') {
@@ -141,7 +146,6 @@ function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {
 					output.push("");
 					output.push(jsonfeed.from.name);
 					output.push(jsonfeed.created_time);
-					// console.log("status parse middle");
 					var groupmessage = '';
 					if (jsonfeed.caption)
 						groupmessage = groupmessage + jsonfeed.caption;
@@ -163,7 +167,6 @@ function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {
 						output.push(0);
 					output.push(jsonfeed.updated_time);
 					output.push("Facebook");
-					console.log("photo status  populated");
 					outputFeedArray.push(output);
 				}
 			}
