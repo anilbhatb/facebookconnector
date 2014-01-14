@@ -247,7 +247,7 @@ function GetInitialPosts(req, res) {
     var fbfeeds = '', rockonfeeds = '';
   
 	GetAccessToken(req, res,
-			   function (req, res) {
+			   function (req, res, fb_access_token) {
 			   	var sid = req.query.sid;
 			   	var sessionid = req.query.sessionid;
 			   	var options = {
