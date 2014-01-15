@@ -4,7 +4,7 @@ var http = require('http')
 var rockonurl = '192.168.6.190';
 var rockonport = '80';
 //var rockonurl = 'localhost';
-//var rockonport = '49785';
+//var rockonport = '24389';
 var fb_expires;
 
 function GetAccessToken(req, res, fun) {
@@ -56,6 +56,56 @@ function GetAccessToken(req, res, fun) {
 	    });
 	});
 	//rockonreq.write(dat);
+	rockonreq.end();
+}
+function SaveSocialNetworkInfo(req, res,userid, userName,networkName,tokenkey,url,expiresIn, fun) {
+	var sid = req.query.sid == undefined ? req.body.sid : req.query.sid;
+	var sessionid = req.query.sessionid == undefined ? req.body.sessionid : req.query.sessionid;
+	if (sid == undefined) { sid = req.params.sid; sessionid = req.params.session; }
+	console.log("call to save social network info"+sid + "sessionid:" + sessionid);
+	var postdata = JSON.stringify({
+		"userid": userid
+		, "username": userName
+		, "networkname": networkName
+		, "tokenkey": tokenkey
+		, "url": url
+		, "expiresIn": expiresIn
+	});
+	var options = {
+		host: rockonurl,
+		port: rockonport,
+		path: '/SocialNetwork/SaveSocialNetworkInfo',
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json; charset=utf-8',
+			'dataType': "json",
+			'rockonconnector': "secretRockonCode",
+			'sid': sid,
+			'sessionid': sessionid,
+			'Content-Length': postdata.length
+		}
+	};
+	var rockonreq = http.request(options, function (rockonres) {
+		var fb_access_token;
+		var socialInfo = '';
+		rockonres.setEncoding('utf8');
+		rockonres.on('data', function (chunk) {
+			socialInfo += chunk;
+		});
+
+		rockonres.on('error', function (err) {
+			console.log(err);
+			fun();
+		});
+		rockonres.on('end', function () {
+			if (socialInfo == "" || socialInfo == null) {
+				console.log("null returned");
+				fun();
+			}
+			fun();
+		});
+	});
+	rockonreq.write(postdata);
 	rockonreq.end();
 }
 function GetPost(req, res) {
@@ -297,3 +347,4 @@ exports.GetAccessToken = GetAccessToken;
 exports.GetInitialPosts = GetInitialPosts;
 exports.GetPostsOnScroll = GetPostsOnScroll;
 exports.GetPost = GetPost;
+exports.SaveSocialNetworkInfo = SaveSocialNetworkInfo;

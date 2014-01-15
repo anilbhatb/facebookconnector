@@ -1,4 +1,5 @@
 var request = require('request')
+	, postcontroller = require('./postcontroller')
   , qs = require('qs');
 console.log("connector url:  "+ CONNECTOR_URL);
 var callbackURL = 'http://'+CONNECTOR_URL+'/callback'
@@ -72,21 +73,23 @@ function callback(req, res, fn) {
     , errorreason = req.query.error_reason
     , error = req.query.error;
 	console.log('http://' + CONNECTOR_URL + '/callback');
-    
+	console.log(req.query);
 	//if (state == cb_state)
 	 {
-	     console.log(FACEBOOK_APP_ID);
+	 	console.log(FACEBOOK_APP_ID);
+	 	console.log(req.params.sid);
 		if (code !== undefined) {
 			var params = {
 			    client_id: FACEBOOK_APP_ID,
-				redirect_uri: 'http://'+CONNECTOR_URL+'/callback',
+				redirect_uri: 'http://'+CONNECTOR_URL+'/callback/'+ req.params.sid+ "/"+req.params.session,
 				client_secret: FACEBOOK_APP_SECRET,
 				code: code
 			};
 
 			request.get({ url: 'https://graph.facebook.com/oauth/access_token', qs: params }, function (err, resp, body) {
 			    var results = qs.parse(body);
-
+			    console.log("sdsdsdsd");
+			    console.log(body);
 			    // Retreive the access_token and store it for future use
 
 			    access_token = results.access_token;
@@ -99,10 +102,10 @@ function callback(req, res, fn) {
 			    console.log("Connected to Facebook");
 			    // close the popup
 			    fn(access_token);
-			    var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
-			    //res.redirect('/facebook.html');
-			    res.writeHead(200, { 'Content-Type': 'text/html' });
-			    res.end(output);
+			    //var output = '<html><head></head><body><script>var access_token = "anil";alert("sdsd");</script> </body></html>';
+			    ////res.redirect('/facebook.html');
+			    //res.writeHead(200, { 'Content-Type': 'text/html' });
+			    //res.end(output);
 			});
 
 		} else {

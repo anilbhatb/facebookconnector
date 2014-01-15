@@ -34,7 +34,7 @@ function postMessage(access_token, message, response) {
 	    response.end(output);
 	});
 }
-function getProfile(tokeninfo, response, callback) {
+function getProfile(tokeninfo, response, callback, fun) {
 	// Specify the URL and query string parameters needed for the request
 	var url = 'https://graph.facebook.com/me';
 	var params = {
@@ -42,20 +42,23 @@ function getProfile(tokeninfo, response, callback) {
 		fields: 'id,name,last_name,link,username,hometown,work,gender,languages,interests,education,email'
 	};
 	console.log('into get profile');
+	console.log(tokeninfo.access_token);
 	// Send the request
 	request.get({ url: url, qs: params }, function (err, resp, body) {
 		// Handle any errors that occur
 		if (err) return console.error("Error occured: ", err);
+		console.log(body);
 		body = JSON.parse(body);
 		body.access_token = tokeninfo.access_token;
 		body.expires = tokeninfo.expires;
 		if (body.error) return console.error("Error returned from facebook: ", body.error);
-
-		response.writeHeader(200, { 'Content-Type': 'application/json' });
-		if (callback)
-			response.end(callback + "(" + JSON.stringify(body, null, '\t') + ")");
-		else
-			response.end(JSON.stringify(body, null, '\t'));
+		if (fun)
+			fun(body);
+		//response.writeHeader(200, { 'Content-Type': 'application/json' });
+		//if (callback)
+			//response.end(callback + "(" + JSON.stringify(body, null, '\t') + ")");
+		//else
+			//response.end(JSON.stringify(body, null, '\t'));
 	});
 }
 function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {

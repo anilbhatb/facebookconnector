@@ -145,20 +145,24 @@ else {
 	},
   function (accessToken, refreshToken, profile, done) {
   	// asynchronous verification, for effect...
+  	console.log("next function getting called 1");
   	process.nextTick(function () {
   		// To keep the example simple, the user's Facebook profile is returned to
   		// represent the logged-in user.  In a typical application, you would want
   		// to associate the Facebook account with a user record in your database,
   		// and return that user instead.
+  		console.log("next function getting called");
   		return done(null, profile);
   	});
   }
 ));
 	app.get('/auth/facebook',
-
-  passport.authenticate('facebook', { scope: ['create_note', 'email', 'export_stream', 'manage_pages', 'photo_upload', 'publish_actions', 'read_stream', 'publish_stream', 'read_stream', 'share_item', 'status_update', 'user_about_me', 'user_activities', 'user_friends', 'user_interests', 'user_likes', 'user_photos', 'user_questions', 'video_upload'] }),
-    //passport.authenticate('facebook', { scope: ['user_about_me', 'user_photos', 'email', 'publish_stream', 'read_stream', 'manage_pages'] }),
-  function (req, res) {
+function(req,res){
+	///console.log("authentication");
+	passport.authenticate('facebook', { callbackURL: "http://" + CONNECTOR_URL + "/callback/" + req.query.sid + "/" + req.query.sessionid, scope: ['create_note', 'email', 'export_stream', 'manage_pages', 'photo_upload', 'publish_actions', 'read_stream', 'publish_stream', 'read_stream', 'share_item', 'status_update', 'user_about_me', 'user_activities', 'user_friends', 'user_interests', 'user_likes', 'user_photos', 'user_questions', 'video_upload'] })(req,res);
+	//passport.authenticate('facebook', { scope: ['user_about_me', 'user_photos', 'email', 'publish_stream', 'read_stream', 'manage_pages'] }),
+	//function (req, res) {
+  	//console.log('it is getting called');
   	// The request will be redirected to Facebook for authentication, so this
   	// function will not be called.
   });
@@ -180,6 +184,9 @@ else {
 	var users = [
     { id: 1, username: 'John', password: 'pass', domain: "http://localhost:8180/", email: 'john@example.com', access_token: '' }
   , { id: 2, username: 'joe', password: 'birthday', domain: "http://localhost:8180/", email: 'joe@example.com', access_token: '' }
+	];
+	var rockonusers = [
+	{ id: 1, sessionid: 'John', password: 'pass', domain: "http://localhost:8180/", email: 'john@example.com', access_token: '' }
 	];
 
 	// #############################################################################################################
@@ -258,16 +265,23 @@ else {
 	app.get('/login', oauth.login);
 	app.get('/appposttouser', oauth.getapplicationAuthtoken);
 
-	app.get('/callback', function (req, res) {
+	app.get('/callback/:sid/:session', function (req, res) {
+		console.log("callback with id working");
+		
+		
 		oauth.callback(req, res, function (token) {
-			for (var i = 0, len = users.length; i < len; i++) {
-				console.log('inside for loop: ' + loggedinuser);
-				var user = users[i];
-				if (user.username === loggedinuser) {
-					user.access_token = token;
-					console.log('stored access token for future use');
-				}
-			}
+			var profile = fbapi.getProfile({ access_token: token, expires: "" }, res, "", function (profile) {
+				console.log("profile info:" + profile);
+				postcontroller.SaveSocialNetworkInfo(req, res, profile.id, profile.name, "facebook", token, profile.link, "", function ()
+				{
+					var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
+					//res.redirect('/facebook.html');
+					res.writeHead(200, { 'Content-Type': 'text/html' });
+					res.end(output);
+				});
+				
+			});
+			
 		});
 	});
 
