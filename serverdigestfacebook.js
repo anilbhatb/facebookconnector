@@ -110,26 +110,28 @@ else {
 		});
 	});
 	app.get('/fbhome', function (req, res) {
-		// Check to ensure user has a valid access_token
-		if (oauth.access_token) {
-			// Call function that contains API call to post on Facebook (see facebook.js)
-			fbapi.getHomeFeeds(oauth.access_token, res);
-		} else {
-			console.log("Couldn't confirm that user was authenticated. Redirecting to /");
-			res.redirect('/');
-		}
+	    // Check to ensure user has a valid access_token
+	    if (oauth.access_token) {
+	        // Call function that contains API call to post on Facebook (see facebook.js)
+	        fbapi.getHomeFeeds(oauth.access_token, res);
+	    } else {
+	        console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+	        res.redirect('/');
+	    }
 	});
 	app.get('/fbgetProfile', function (req, res) {
-		// Check to ensure user has a valid access_token
-		if (oauth.access_token) {
-			var callback = req.query.callback;
-			// Call function that contains API call to post on Facebook (see facebook.js)
-			var tokeninfo = { access_token: oauth.access_token, expires: oauth.expires };
-			fbapi.getProfile(tokeninfo, res, callback);
-		} else {
-			console.log("Couldn't confirm that user was authenticated. Redirecting to /");
-			res.redirect('/');
-		}
+	    // Check to ensure user has a valid access_token
+	    postcontroller.GetAccessToken(req, res, function (req, res, fb_access_token) {
+	        if (fb_access_token) {
+	            var callback = req.query.callback;
+	            // Call function that contains API call to post on Facebook (see facebook.js)
+	            var tokeninfo = { access_token: oauth.access_token, expires: oauth.expires };
+	            fbapi.getProfile(tokeninfo, res, callback);
+	        } else {
+	            console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+	            res.redirect('/');
+	        }
+	    });
 	});
 	var loggedinuser = '';
 	// Use the FacebookStrategy within Passport.
