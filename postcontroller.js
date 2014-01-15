@@ -148,7 +148,7 @@ function GetPost(req, res) {
 		   			//  alert('f');
 		   			var callback = req.query.callback;
 		   			if (callback)
-		   				res.end(callback + "(" + msg + ")");
+		   			    res.end(callback + "(" + JSON.stringify(body, null, '\t') + ")");
 		   			else
 		   				res.end(JSON.stringify(body, null, '\t'));
 
