@@ -258,7 +258,7 @@ function feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token) {
 			}
 			else if (findex < facebookposts.length) {
 				while (clubbedfeed.length < maxfeeds && rindex < facebookposts.length) {
-					clubbedfeed.push(facebookposts[rindex++]);
+					clubbedfeed.push(facebookposts[findex++]);
 				}
 				break;
 			}
