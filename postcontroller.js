@@ -1,11 +1,22 @@
 var http = require('http')
         , fbapi = require('./facebook')
-    , utils = require('util');
+    , utils = require('util')
+        , winston = require('winston');
 var rockonurl = '192.168.6.190';
 var rockonport = '80';
 //var rockonurl = 'localhost';
 //var rockonport = '24389';
 var fb_expires;
+var logger = new (winston.Logger)({
+	transports: [
+      
+      new (winston.transports.File)({ filename: 'connectorpost.log' })
+	]
+});
+logger.log('info','logger for post controller working');
+//winston.add(winston.transports.File, { filename: 'connectorpost.log' });
+////winston.remove(winston.transports.Console);
+//winston.log('info', 'winston logging started for post controller');
 
 function GetAccessToken(req, res, fun) {
 	var sid = req.query.sid == undefined ? req.body.sid : req.query.sid;
@@ -218,6 +229,11 @@ function feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token) {
 		if ((fb_access_token && fbfeeds == '') || rockonfeeds == '')
 			return;
 		var clubbedfeed = [];
+
+		logger.log("info","FB FEEDS FOR SORT FB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORT");
+		logger.log("info", fbfeeds.posts);
+		logger.log("info", "ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ");
+		logger.log("info", rockonfeeds.posts);
 		var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
 		var rockonposts = rockonfeeds.posts == undefined ? [] : rockonfeeds.posts;
 		var facebookposts = fbfeeds.posts == undefined ? [] : fbfeeds.posts;
@@ -258,7 +274,8 @@ function feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token) {
 		console.log("error in feedGetComplete" + e);
 		groupfeed = { posts: [] };
 	}
-	//  console.log(groupfeed.posts);
+	logger.log("info", "CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT ");
+	logger.log("info", groupfeed.posts);
 	var callback = req.query.callback;
 	if (callback)
 		res.end(callback + "(" + JSON.stringify(groupfeed) + ")");

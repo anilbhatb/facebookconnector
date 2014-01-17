@@ -1,4 +1,13 @@
-var request = require('request');
+var request = require('request')
+        , winston = require('winston');
+var logger = new (winston.Logger)({
+	transports: [
+    
+      new (winston.transports.File)({ filename: 'connectorfacebook.log' })
+	]
+});
+logger.log('info', 'logger for post controller working');
+
 
 function postMessage(access_token, message, response) {
 	// Specify the URL and query string parameters needed for the request
@@ -175,6 +184,8 @@ function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {
 			}
 		});
 		if (fun) {
+			logger.log("info","CONVERTED FACEBOOK CONVERTED FACEBOOKCONVERTED FACEBOOKCONVERTED FACEBOOKCONVERTED FACEBOOKCONVERTED FACEBOOKCONVERTED FACEBOOK");
+			logger.log("info", outputFeedArray);
 			fun({ posts: outputFeedArray });
 		}
 		else {
@@ -317,8 +328,12 @@ function getHomeFeeds(access_token, response, fun, maxdate) {
 			//  message: message
 		};
 		console.log('into home feeds');
+		
 		fbget(url, params, access_token, response,
     function (body) {
+    	logger.log("info","RAW FACEBOOK RAW FACEBOOK RAW FACEBOOK RAW FACEBOOK RAW FACEBOOK RAW FACEBOOK RAW FACEBOOK RAW FACEBOOK RAW FACEBOOK");
+    	logger.log("info", body.data);
+    	
     	getconvertedfacebookfeed(body.data, response, fun, maxdate);
     });
 	}

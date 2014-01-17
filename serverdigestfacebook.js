@@ -25,6 +25,7 @@ else {
   , digest = require('./digestapp')
   , qs = require('qs')
   , domain = require('domain')
+  ,winston  = require('winston')
   , DigestStrategy = require('passport-http').DigestStrategy // http digest
   , FacebookStrategy = require('passport-facebook').Strategy;
 	// Setup middleware
@@ -40,7 +41,9 @@ else {
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.use(app.router);
-
+	winston.add(winston.transports.File, { filename: 'connector.log' });
+	winston.remove(winston.transports.Console);
+	winston.log('info', 'winston logging started');
 	app.post('/fbpostfromuser', function (req, res) {
 		// Check to ensure user has a valid access_token
 		//if (oauth.access_token) {
