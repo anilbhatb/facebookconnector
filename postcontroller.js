@@ -1,6 +1,7 @@
 var http = require('http')
         , fbapi = require('./facebook')
     , utils = require('util')
+	, moment = require('moment')
         , winston = require('winston');
 var rockonurl = '192.168.6.190';
 var rockonport = '80';
@@ -234,15 +235,17 @@ function feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token) {
 		logger.log("info", fbfeeds.posts);
 		logger.log("info", "ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ");
 		logger.log("info", rockonfeeds.posts);
+		
 		var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
 		var rockonposts = rockonfeeds.posts == undefined ? [] : rockonfeeds.posts;
 		var facebookposts = fbfeeds.posts == undefined ? [] : fbfeeds.posts;
-
+		console.log(rockonposts[0][9] + "skdjfb" + facebookposts[0][9]);
 		for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
 			if (clubbedfeed.length >= maxfeeds)
 				break;
 			if (rindex < rockonposts.length && findex < facebookposts.length) {
-				if (new Date(rockonposts[rindex][9]) > new Date(facebookposts[findex][9])) {
+				//console.log(moment('2014-01-17T15:44:48+0000', 'YYYY-MM-DDTHH:mm');
+				if (moment(rockonposts[rindex][9] + ' GMT') > moment(facebookposts[findex][9])) {
 					clubbedfeed.push(rockonposts[rindex++]);
 				}
 				else {
@@ -258,7 +261,7 @@ function feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token) {
 			}
 			else if (findex < facebookposts.length) {
 				while (clubbedfeed.length < maxfeeds && rindex < facebookposts.length) {
-					clubbedfeed.push(facebookposts[rindex++]);
+					clubbedfeed.push(facebookposts[findex++]);
 				}
 				break;
 			}

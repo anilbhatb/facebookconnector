@@ -1,5 +1,6 @@
 var request = require('request')
-        , winston = require('winston');
+        , winston = require('winston')
+		, moment = require('moment');
 var logger = new (winston.Logger)({
 	transports: [
     
@@ -74,12 +75,12 @@ function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {
 	try {
 		var outputFeedArray = [];
 		console.log("date: " + maxdate);
-		var objmaxdate = maxdate ? new Date(maxdate) : undefined;
+		var objmaxdate = maxdate ? moment(maxdate+ " GMT") : undefined;
 		feedArray.forEach(function (jsonfeed) {
 			//   var inputfeed = $("#inputfeed").val();
 			var output = [];
 			if (objmaxdate != undefined
-                 && new Date(jsonfeed.updated_time) >= objmaxdate) {
+                 && moment(jsonfeed.updated_time) >= objmaxdate) {
 			}
 			else {
 				if (jsonfeed.status_type == 'mobile_status_update' || (jsonfeed.type == 'status' && jsonfeed.status_type == 'wall_post')) {
