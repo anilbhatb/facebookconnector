@@ -102,6 +102,7 @@ function SaveSocialNetworkInfo(req, res,userid, userName,networkName,tokenkey,ur
 				console.log("null returned");
 				fun();
 			}
+			else
 			fun();
 		});
 	});

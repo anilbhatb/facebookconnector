@@ -224,8 +224,8 @@ function getLikes(access_token, response, request) {
 	fbget(url, params, access_token, response,
           function (body) {
           	response.writeHeader(200, { 'Content-Type': 'application/json' });
-            if (req.query.callback) {
-                response.end(callback + "(" + JSON.stringify(getConvertedLikes(body.data)) + ")");
+            if (request.query.callback) {
+            	response.end(request.query.callback + "(" + JSON.stringify(getConvertedLikes(body.data)) + ")");
             }
             else {
                 response.end(JSON.stringify(getConvertedLikes(body.data)));
@@ -241,8 +241,8 @@ function getReplies(access_token, response, request) {
     fbget(url, params, access_token, response,
         function (body) {
             response.writeHeader(200, { 'Content-Type': 'application/json' });
-            if (req.query.callback) {
-                response.end(callback + "(" + JSON.stringify(getConvertedReplies(body.data)) + ")");
+            if (request.query.callback) {
+            	response.end(request.query.callback + "(" + JSON.stringify(getConvertedReplies(body.data)) + ")");
             }
             else {
                 response.end(JSON.stringify(getConvertedReplies(body.data)));
