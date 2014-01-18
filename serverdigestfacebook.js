@@ -51,7 +51,7 @@ else {
 			if (fb_access_token) {
 				// Call function that contains API call to post on Facebook (see facebook.js)
 
-				fbapi.postMessage(fb_access_token, req.body.message, res);
+				fbapi.postMessage(fb_access_token, req, res);
 			} else {
 				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');

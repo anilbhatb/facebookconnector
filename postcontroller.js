@@ -239,7 +239,6 @@ function feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token) {
 		var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
 		var rockonposts = rockonfeeds.posts == undefined ? [] : rockonfeeds.posts;
 		var facebookposts = fbfeeds.posts == undefined ? [] : fbfeeds.posts;
-		console.log(rockonposts[0][9] + "skdjfb" + facebookposts[0][9]);
 		for (pos = 0; pos < facebookposts.length + rockonposts.length; pos++) {
 			if (clubbedfeed.length >= maxfeeds)
 				break;

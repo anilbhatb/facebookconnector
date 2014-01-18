@@ -10,12 +10,13 @@ var logger = new (winston.Logger)({
 logger.log('info', 'logger for post controller working');
 
 
-function postMessage(access_token, message, response) {
+function postMessage(access_token, request, response) {
 	// Specify the URL and query string parameters needed for the request
 	var url = 'https://graph.facebook.com/me/feed';
 	var params = {
 		access_token: access_token,
-		message: message
+		message: request.body.message,
+        link: request.body.link
 	};
 
 	// Send the request
@@ -205,17 +206,20 @@ function getconvertedfacebookfeed(feedArray, response, fun, maxdate) {
 		}
 	}
 }
-function getConvertedLikes(likesArray) {
-	var outputlikes = [];
-	likesArray.forEach(function (objlike) {
-		outputlikes.push(objlike.name);
-	});
-	return { members: outputlikes };
+function getConvertedLikes(likesData) {
+	var outputlikes = [], count;
+	likesData.data.forEach(function (objlike) {
+	    outputlikes.push(objlike.name);
+        
+});
+if (likesData.summary)
+    count = likesData.summary.total_count;
+	return { members: outputlikes, count:count };
 }
-function getConvertedReplies(replyArray) {
-	var outputreply = [];
-	var replycount = replyArray.length;
-	replyArray.forEach(function (objreply) {
+function getConvertedReplies(replyData) {
+	var outputreply = [],count;
+	var replycount = replyData.data.length;
+	replyData.data.forEach(function (objreply) {
 		var output = [];
 		output.push(objreply.id);
 		output.push(objreply.from.id);
@@ -224,14 +228,19 @@ function getConvertedReplies(replyArray) {
 		output.push(objreply.created_time);
 		output.push("reply no: " + replycount--);
 		outputreply.push(output);
-	});
-	return { replies: outputreply };
+});
+if (replyData.summary)
+    count = replyData.summary.total_count;
+
+	return { replies: outputreply , count:count};
 }
 function getLikes(access_token, response, request) {
 	console.log('call to get likes');
 	var url = 'https://graph.facebook.com/' + request.query.postid + '/likes';
 	var params = {
-		access_token: access_token
+		access_token: access_token,
+        summary:true,
+        limit:10
 	};
 	fbget(url, params, access_token, response,
           function (body) {
@@ -240,7 +249,7 @@ function getLikes(access_token, response, request) {
             	response.end(request.query.callback + "(" + JSON.stringify(getConvertedLikes(body.data)) + ")");
             }
             else {
-                response.end(JSON.stringify(getConvertedLikes(body.data)));
+                response.end(JSON.stringify(getConvertedLikes(body)));
             }
           });
    }
@@ -248,16 +257,17 @@ function getReplies(access_token, response, request) {
 	var url = 'https://graph.facebook.com/' + request.query.postid + '/comments';
 	var params = {
 		access_token: access_token,
-		limit: 100
+		limit: 10, 
+        summary:true
     };
     fbget(url, params, access_token, response,
         function (body) {
             response.writeHeader(200, { 'Content-Type': 'application/json' });
             if (request.query.callback) {
-            	response.end(request.query.callback + "(" + JSON.stringify(getConvertedReplies(body.data)) + ")");
+            	response.end(request.query.callback + "(" + JSON.stringify(getConvertedReplies(body)) + ")");
             }
             else {
-                response.end(JSON.stringify(getConvertedReplies(body.data)));
+                response.end(JSON.stringify(getConvertedReplies(body)));
             }
     });
 }
