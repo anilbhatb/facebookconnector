@@ -10,13 +10,13 @@ var logger = new (winston.Logger)({
 logger.log('info', 'logger for post controller working');
 
 
-function postMessage(access_token, request, response) {
+function postMessage(access_token, req, response) {
 	// Specify the URL and query string parameters needed for the request
 	var url = 'https://graph.facebook.com/me/feed';
 	var params = {
 		access_token: access_token,
-		message: request.body.message,
-        link: request.body.link
+		message: req.body.message,
+        link: req.body.link
 	};
 
 	// Send the request
@@ -287,7 +287,18 @@ function postReplies(access_token, response, request, message) {
 	};
 	fbpost(url, params, access_token, response);
 }
-
+function postNotification( request, response) {
+    console.log('call to post notification');
+    var user_id = req.body.user_id;
+    var url = 'https://graph.facebook.com/' + user_id + '/notifications';
+    var params = {
+        access_token: req.body.access_token,
+        href: req.body.href,
+        ref: req.body.ref,
+        template: req.body.template
+    };
+    fbpost(url, params, access_token, response);
+}
 function fbget(url, params, access_token, response, fun) {
     request.get({ url: url, qs: params }, function (err, resp, body) {
         // Handle any errors that occur
@@ -352,34 +363,11 @@ function getHomeFeeds(access_token, response, fun, maxdate) {
 		console.log(e);
 	}
 }
-function postfromapplication(access_token, message, response) {
-	// Specify the URL and query string parameters needed for the request
-	var url = 'https://graph.facebook.com/100005623991718/feed';
-	var params = {
-		access_token: access_token,
-		message: message
-	};
 
-	// Send the request
-	request.post({ url: url, qs: params }, function (err, resp, body) {
-		// Handle any errors that occur
-		if (err) return console.error("Error occured: ", err);
-		body = JSON.parse(body);
-		if (body.error) return console.error("Error returned from facebook: ", body.error);
-
-		// Generate output
-		var output = '<p>' + body + '</p>';
-		output += '<pre>' + JSON.stringify(body, null, '\t') + '</pre>';
-
-		// Send output as the response
-		response.writeHeader(200, { 'Content-Type': 'text/html' });
-		response.end(output);
-	});
-}
 
 exports.postMessage = postMessage;
 exports.getHomeFeeds = getHomeFeeds;
-exports.postfromapplication = postfromapplication;
 exports.getProfile = getProfile;
 exports.getLikes = getLikes;
 exports.getReplies = getReplies;
+exports.postNotification = postNotification;

@@ -58,16 +58,12 @@ else {
 			}
 		});
 	});
-	app.post('/fbpostfromapplication', function (req, res) {
+    app.post('/fbpostNotification', function (req, res) {
 		// Check to ensure user has a valid access_token
-		if (oauth.access_token) {
 			// Call function that contains API call to post on Facebook (see facebook.js)
-			fbapi.postfromapplication(oauth.access_token, req.body.message, res);
-		} else {
-			console.log("Couldn't confirm that user was authenticated. Redirecting to /");
-			res.redirect('/');
-		}
+        fbapi.postNotification(req, res);
 	});
+
 	app.get('/fbgetReplies', function (req, res) {
 		// Check to ensure user has a valid access_token
 		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
