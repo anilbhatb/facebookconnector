@@ -246,7 +246,7 @@ function getLikes(access_token, response, request) {
           function (body) {
           	response.writeHeader(200, { 'Content-Type': 'application/json' });
             if (request.query.callback) {
-            	response.end(request.query.callback + "(" + JSON.stringify(getConvertedLikes(body.data)) + ")");
+            	response.end(request.query.callback + "(" + JSON.stringify(getConvertedLikes(body)) + ")");
             }
             else {
                 response.end(JSON.stringify(getConvertedLikes(body)));
