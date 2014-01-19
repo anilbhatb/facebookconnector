@@ -1,0 +1,4 @@
+initctl help
+initctl status facebookconnctor
+initctl reload facebookconnctor
+initctl start facebookconnctor
