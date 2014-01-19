@@ -8,26 +8,13 @@ if (cluster.isMaster) {
 	});
 }
 else {
-	//global.FACEBOOK_APP_ID = "236299956516217"
-	//global.FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
-	//global.CONNECTOR_URL = "localhost:8180";
-    //global.rockonurl = 'localhost';
-    //global.rockonport = '24389';
-
-    global.rockonurl = '192.168.6.190';
-    global.rockonport = '80';
-	global.FACEBOOK_APP_ID = "363685873749093"
-	global.FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
-	global.CONNECTOR_URL = "192.168.6.148:8180";
-
+	
 	var express = require('express')
   , fbapi = require('./facebook')
   , postcontroller = require('./postcontroller')
-  , digestclient = require('./digestclient')
   , oauth = require('./oauth')
   , passport = require('passport')
   , app = express()
-  , digest = require('./digestapp')
   , qs = require('qs')
   , domain = require('domain')
   ,winston  = require('winston')
@@ -37,7 +24,21 @@ else {
 	var serverDomain = domain.create();
 	serverDomain.on('error', function (err) {
 		console.log("Server Domain Error: " + err);
-	});
+    });
+    if (app.get('env') == undefined) {
+        app.set('env', 'development');
+    }
+    var config = require('./config.json')[app.get('env')];
+
+    app.configure(app.get('env'), function () {
+        console.log(app.get('env') + " environment started");
+        global.FACEBOOK_APP_ID = config.FACEBOOK_APP_ID;
+        global.FACEBOOK_APP_SECRET = config.FACEBOOK_APP_SECRET;
+        global.CONNECTOR_URL = config.CONNECTOR_URL;
+        global.CALLBACK_URL = config.CALLBACK_URL;
+        global.ROCKON_URL =config.ROCKON_URL;
+        global.ROCKON_PORT =config.ROCKON_PORT;
+    });
 	app.use(express.static(__dirname));
 	app.use(express.bodyParser());
 	app.use(express.logger());
@@ -234,16 +235,16 @@ else {
         );
     }
 ));
-	app.get('/digestauth',
+    app.get('/digestauth',
   passport.authenticate('digest', { session: true }),
   function (req, res) {
-  	// The request will be redirected to Facebook for authentication, so this
-  	// function will not be called.
-  	if (oauth.access_token) {
-  		res.redirect("/facebook.html");
-  	}
-  	else
-  		res.redirect("/auth/facebook");
+      // The request will be redirected to Facebook for authentication, so this
+      // function will not be called.
+      if (oauth.access_token) {
+          res.redirect("/facebook.html");
+      }
+      else
+          res.redirect("/auth/facebook");
   });
 
 	app.get('/logout', function (req, res) {

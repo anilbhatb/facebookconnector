@@ -1,0 +1,29 @@
+{
+"production":
+	{
+		"FACEBOOK_APP_ID" : "564610426905451",
+        "FACEBOOK_APP_SECRET" : "4f0f74ef2aa24fa973c263707e929f8f",
+        "CONNECTOR_URL" : "192.168.6.110:8180",
+        "CALLBACK_URL" : "http://192.168.6.110/callback",
+        "ROCKON_URL" : "tescra.rockonllc.com",
+        "ROCKON_PORT" : "80"
+	},
+"development":
+	{
+		"FACEBOOK_APP_ID" : "236299956516217",
+        "FACEBOOK_APP_SECRET" : "9364d9abbaf1e83f0a0608c4bc737f91",
+        "CONNECTOR_URL" : "localhost:8180",
+        "CALLBACK_URL" : "http://localhost:8180/callback",
+		"ROCKON_URL" : "localhost",
+        "ROCKON_PORT" : "24389"
+	},
+"demo":
+	{
+		"FACEBOOK_APP_ID" : "363685873749093",
+        "FACEBOOK_APP_SECRET" : "84895681852dc4a96f23345fd4d855b0",
+        "CONNECTOR_URL" : "192.168.6.148:8180",
+        "CALLBACK_URL" : "http://192.168.6.148:8180/callback",
+        "ROCKON_URL" : "192.168.6.190",
+        "ROCKON_PORT" : "80"
+	}
+}

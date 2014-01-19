@@ -1,10 +1,6 @@
 var request = require('request')
 	, postcontroller = require('./postcontroller')
   , qs = require('qs');
-console.log("connector url:  "+ CONNECTOR_URL);
-var callbackURL = 'http://'+CONNECTOR_URL+'/callback'
-  , APP_ID = FACEBOOK_APP_ID
-  , APP_SECRET = FACEBOOK_APP_SECRET;
 
 var state = '';
 var access_token = '';
@@ -16,7 +12,7 @@ function login(req, res) {
   state = Math.floor(Math.random()*1e19);
 	var params = {
 	    client_id: FACEBOOK_APP_ID,
-		redirect_uri: callbackURL,
+	    redirect_uri: CALLBACK_URL,
 		state: state,
 		display: 'popup',
 		scope: 'publish_stream' // required in order to post on user's feed
@@ -50,11 +46,6 @@ function getapplicationAuthtoken(user_token, res) {
         //console.log('inside getApplication Auth token');
         console.log(jsondata.data);
         name = jsondata.data[0].name;
-        //  console.log('1:' + name);
-        //  category = jsondata.data[0].category;
-        // console.log('2: ' + category);
-        //  id = jsondata.data[0].id;
-        //  console.log('3: ' + id);
         if (jsondata.data )
         if( jsondata.data[0]) {
             app_access_token = jsondata.data[0].access_token;
@@ -72,11 +63,8 @@ function callback(req, res, fn) {
     , cb_state = req.query.state
     , errorreason = req.query.error_reason
     , error = req.query.error;
-	console.log('http://' + CONNECTOR_URL + '/callback');
-	console.log(req.query);
 	//if (state == cb_state)
 	 {
-	 	console.log(FACEBOOK_APP_ID);
 	 	console.log(req.params.sid);
 		if (code !== undefined) {
 			var params = {

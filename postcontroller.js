@@ -21,8 +21,8 @@ function GetAccessToken(req, res, fun) {
 	logger.log("info","GetAccessToken sid:"+sid + "sessionid:" + sessionid);
 	
 	var options = {
-		host: rockonurl,
-		port: rockonport,
+		host: ROCKON_URL,
+		port: ROCKON_PORT,
 		path: '/SocialNetwork/GetAccessToken',
 		method: 'POST',
 		headers: {
@@ -80,8 +80,8 @@ function SaveSocialNetworkInfo(req, res,userid, userName,networkName,tokenkey,ur
 		, "expiresIn": expiresIn
 	});
 	var options = {
-		host: rockonurl,
-		port: rockonport,
+		host: ROCKON_URL,
+		port: ROCKON_PORT,
 		path: '/SocialNetwork/SaveSocialNetworkInfo',
 		method: 'POST',
 		headers: {
@@ -128,8 +128,8 @@ function GetPost(req, res) {
 		   		'soid': req.body.soid, 'replySoid': req.body.replySoid, 'areRepliesExposed': req.body.areRepliesExposed, 'onNotification': req.body.onNotification, 'replyCountBeforeNotification': req.body.replyCountBeforeNotification
 		   	});
 		   	var options = {
-		   		host: rockonurl,
-		   		port: rockonport,
+		   		host: ROCKON_URL,
+		   		port: ROCKON_PORT,
 
 		   		path: '/Post/GetPost',
 		   		method: 'POST',
@@ -179,8 +179,8 @@ function GetPostsOnScroll(req, res) {
 		   		'soid': req.query.soid, 'date': req.query.date
 		   	});
 		   	var options = {
-		   		host: rockonurl,
-		   		port: rockonport,
+		   		host: ROCKON_URL,
+		   		port: ROCKON_PORT,
 		   		path: '/Post/GetPostsOnScroll',
 		   		//data: '{"id": "2","token": "sdsd"}',
 		   		method: 'POST',
@@ -317,8 +317,8 @@ function GetInitialPosts(req, res) {
 			   	var sid = req.query.sid;
 			   	var sessionid = req.query.sessionid;
 			   	var options = {
-			   		host: rockonurl,
-			   		port: rockonport,
+			   		host: ROCKON_URL,
+			   		port: ROCKON_PORT,
 			   		path: '/Post/GetInitialPosts',
 			   		//data: '{"id": "2","token": "sdsd"}',
 			   		method: 'POST',
