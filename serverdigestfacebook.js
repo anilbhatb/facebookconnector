@@ -11,6 +11,11 @@ else {
 	//global.FACEBOOK_APP_ID = "236299956516217"
 	//global.FACEBOOK_APP_SECRET = "9364d9abbaf1e83f0a0608c4bc737f91";
 	//global.CONNECTOR_URL = "localhost:8180";
+    //global.rockonurl = 'localhost';
+    //global.rockonport = '24389';
+
+    global.rockonurl = '192.168.6.190';
+    global.rockonport = '80';
 	global.FACEBOOK_APP_ID = "363685873749093"
 	global.FACEBOOK_APP_SECRET = "84895681852dc4a96f23345fd4d855b0";
 	global.CONNECTOR_URL = "192.168.6.148:8180";
@@ -53,7 +58,7 @@ else {
 
 				fbapi.postMessage(fb_access_token, req, res);
 			} else {
-				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
@@ -70,7 +75,7 @@ else {
 			if (fb_access_token) {
 				fbapi.getReplies(fb_access_token, res, req);
 			} else {
-				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
@@ -81,7 +86,7 @@ else {
 			if (fb_access_token) {
 				fbapi.getLikes(fb_access_token, res, req);
 			} else {
-				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
@@ -92,7 +97,7 @@ else {
 			if (fb_access_token) {
 				fbapi.postReplies(fb_access_token, res, req);
 			} else {
-				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
@@ -103,7 +108,7 @@ else {
 			if (fb_access_token) {
 				fbapi.postLikes(fb_access_token, res, req);
 			} else {
-				console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
@@ -114,7 +119,7 @@ else {
 	        // Call function that contains API call to post on Facebook (see facebook.js)
 	        fbapi.getHomeFeeds(oauth.access_token, res);
 	    } else {
-	        console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+	        winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
 	        res.redirect('/');
 	    }
 	});
@@ -127,7 +132,7 @@ else {
 	            var tokeninfo = { access_token: oauth.access_token, expires: oauth.expires };
 	            fbapi.getProfile(tokeninfo, res, callback);
 	        } else {
-	            console.log("Couldn't confirm that user was authenticated. Redirecting to /");
+	            winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
 	            res.redirect('/');
 	        }
 	    });
@@ -182,16 +187,16 @@ else {
 	// #############################################################################################################
 
 	function findByUsername(username, fn) {
-		console.log('inside findusername');
+		winston.log('info','inside findusername');
 		for (var i = 0, len = users.length; i < len; i++) {
-			console.log('inside for loop: ' + username);
+			winston.log('info','inside for loop: ' + username);
 			var user = users[i];
 			if (user.username === username) {
 				if (user.access_token != "") {
 					oauth.storeaccesstoken(user.access_token);
-					console.log('found a valid token');
+					winston.log('info','found a valid token');
 				}
-				console.log('username found');
+				winston.log('info','username found');
 				return fn(null, user);
 			}
 		}
@@ -202,7 +207,7 @@ else {
   new DigestStrategy(
     { qop: 'auth' },
     function (username, done) {
-    	console.log('Findbyusername being called');
+    	winston.log('info','Findbyusername being called');
     	// Find the user by username. If there is no user with the given username
     	// set the user to `false` to indicate failure. Otherwise, return the
     	// user and user's password.
@@ -218,12 +223,12 @@ else {
     },
     function (params, done) // second callback
     {
-    	console.log('second callback being called');
+    	winston.log('info','second callback being called');
     	// asynchronous validation, for effect...
     	process.nextTick(
             function () {
             	// check nonces in params here, if desired
-            	console.log(params);
+            	winston.log('info',params);
             	return done(null, true);
             }
         );
@@ -256,19 +261,23 @@ else {
 	app.get('/appposttouser', oauth.getapplicationAuthtoken);
 
 	app.get('/callback/:sid/:session', function (req, res) {
-		oauth.callback(req, res, function (token) {
-		    var profile = fbapi.getProfile({ access_token: token, expires: "" }, res, "", function (profile) {
-		        console.log("profile info:" + profile);
-		        postcontroller.SaveSocialNetworkInfo(req, res, profile.id, profile.name, "facebook", token, profile.link, "", function () {
-		            var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
-		            //res.redirect('/facebook.html');
-		            res.writeHead(200, { 'Content-Type': 'text/html' });
-		            res.end(output);
-		        });
+	    if (!req.params.sid) { 
+            res.redirect('http://'+rockonurl+ ":"+ rockonport);
+            return;
+        }
+	    oauth.callback(req, res, function (token) {
+	        var profile = fbapi.getProfile({ access_token: token, expires: "" }, res, "", function (profile) {
+	        
+	            postcontroller.SaveSocialNetworkInfo(req, res, profile.id, profile.name, "facebook", token, profile.link, "", function () {
+	                var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
+	                //res.redirect('/facebook.html');
+	                res.writeHead(200, { 'Content-Type': 'text/html' });
+	                res.end(output);
+	            });
 
-		    });
-			
-		});
+	        });
+
+	    });
 	});
 
 	app.listen(8180);

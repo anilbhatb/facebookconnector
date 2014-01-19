@@ -3,10 +3,6 @@ var http = require('http')
     , utils = require('util')
 	, moment = require('moment')
         , winston = require('winston');
-var rockonurl = '192.168.6.190';
-var rockonport = '80';
-//var rockonurl = 'localhost';
-//var rockonport = '24389';
 var fb_expires;
 var logger = new (winston.Logger)({
 	transports: [
@@ -22,7 +18,7 @@ logger.log('info','logger for post controller working');
 function GetAccessToken(req, res, fun) {
 	var sid = req.query.sid == undefined ? req.body.sid : req.query.sid;
 	var sessionid = req.query.sessionid == undefined ? req.body.sessionid : req.query.sessionid;
-	console.log(sid + "sessionid:" + sessionid);
+	logger.log("info","GetAccessToken sid:"+sid + "sessionid:" + sessionid);
 	
 	var options = {
 		host: rockonurl,
@@ -47,21 +43,21 @@ function GetAccessToken(req, res, fun) {
 	    });
 
 	    rockonres.on('error', function (err) {
-	        console.log(err);
+	        logger.log("error",err);
 	    });
 	    rockonres.on('end', function () {
 	        if (socialInfo == "" || socialInfo == null) {
-	            console.log("null returned");
+	            logger.log("error","null returned sid:"+sid);
 	            fun(req, res);
 	        }
 	        else {
 	            socialInfo = JSON.parse(socialInfo);
 	            if (socialInfo.SocialNetworks) {
-	                console.log('socialInfo.access_token' + socialInfo.SocialNetworks[0].TokenKey);
+	                logger.log("info",'socialInfo.access_token' + socialInfo.SocialNetworks[0].TokenKey);
 	                fb_access_token = socialInfo.SocialNetworks[0].TokenKey;
 	            }
 	            else {
-	                console.log('no social network info found for sid: ' + sid + 'sessionid: ' + sessoinid);
+	                logger.log("info",'no social network info found for sid: ' + sid + 'sessionid: ' + sessoinid);
 	            }
 	            fun(req, res, fb_access_token);
 	        }
@@ -74,7 +70,7 @@ function SaveSocialNetworkInfo(req, res,userid, userName,networkName,tokenkey,ur
 	var sid = req.query.sid == undefined ? req.body.sid : req.query.sid;
 	var sessionid = req.query.sessionid == undefined ? req.body.sessionid : req.query.sessionid;
 	if (sid == undefined) { sid = req.params.sid; sessionid = req.params.session; }
-	console.log("call to save social network info"+sid + "sessionid:" + sessionid);
+	logger.log("info","call to save social network info"+sid + "sessionid:" + sessionid);
 	var postdata = JSON.stringify({
 		"userid": userid
 		, "username": userName
@@ -106,12 +102,12 @@ function SaveSocialNetworkInfo(req, res,userid, userName,networkName,tokenkey,ur
 		});
 
 		rockonres.on('error', function (err) {
-			console.log(err);
+			logger.log("error",err);
 			fun();
 		});
 		rockonres.on('end', function () {
-			if (socialInfo == "" || socialInfo == null) {
-				console.log("null returned");
+		    if (socialInfo == "" || socialInfo == null) {
+				logger.log("error","could not save socialNetwork info: "+postdata );
 				fun();
 			}
 			else
@@ -127,7 +123,7 @@ function GetPost(req, res) {
 		   	var sid = req.query.sid;
 		   	var sessionid = req.query.sessionid;
 
-		   	console.log('GetPost being called');
+		   	logger.log("info",'GetPost being called');
 		   	var postdata = JSON.stringify({
 		   		'soid': req.body.soid, 'replySoid': req.body.replySoid, 'areRepliesExposed': req.body.areRepliesExposed, 'onNotification': req.body.onNotification, 'replyCountBeforeNotification': req.body.replyCountBeforeNotification
 		   	});
@@ -155,7 +151,7 @@ function GetPost(req, res) {
 		   		});
 
 		   		rockonres.on('error', function (err) {
-		   			console.log(err);
+		   			logger.log("error",err);
 		   		});
 		   		rockonres.on('end', function () {
 		   			//  alert('f');
@@ -205,7 +201,7 @@ function GetPostsOnScroll(req, res) {
 		   		});
 
 		   		rockonres.on('error', function (err) {
-		   			console.log(err);
+		   			logger.log("error",err);
 		   			rockonfeeds = { posts: [] };
 		   		});
 		   		rockonres.on('end', function () {
@@ -216,7 +212,7 @@ function GetPostsOnScroll(req, res) {
 		   	rockonreq.write(postdata);
 		   	rockonreq.end();
 		   	if (fb_access_token) {
-		   		console.log('GetHome feeds called');
+		   	    logger.log("info",'GetHome feeds called:' + fb_access_token);
 		   		fbapi.getHomeFeeds(fb_access_token, res, function (feeds) {
 		   			fbfeeds = feeds;
 		   			feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token);
@@ -231,10 +227,10 @@ function feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token) {
 			return;
 		var clubbedfeed = [];
 
-		logger.log("info","FB FEEDS FOR SORT FB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORT");
-		logger.log("info", fbfeeds.posts);
-		logger.log("info", "ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ");
-		logger.log("info", rockonfeeds.posts);
+//		logger.log("info","FB FEEDS FOR SORT FB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORTFB FEEDS FOR SORT");
+//		logger.log("info", fbfeeds.posts);
+//		logger.log("info", "ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ROCKON FEEEDS FOR SORT ");
+//		logger.log("info", rockonfeeds.posts);
 		
 		var pos = 0, rindex = 0, findex = 0, maxfeeds = 9;
 		var rockonposts = rockonfeeds.posts == undefined ? [] : rockonfeeds.posts;
@@ -273,11 +269,11 @@ function feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token) {
 		};
 	}
 	catch (e) {
-		console.log("error in feedGetComplete" + e);
+		logger.log("error","error in feedGetComplete" + e);
 		groupfeed = { posts: [] };
 	}
-	logger.log("info", "CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT ");
-	logger.log("info", groupfeed.posts);
+//	logger.log("info", "CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT CLUBBED FEEDS AFTER SORT ");
+//	logger.log("info", groupfeed.posts);
 	var callback = req.query.callback;
 	if (callback)
 		res.end(callback + "(" + JSON.stringify(groupfeed) + ")");
@@ -309,7 +305,7 @@ function convertrockonfeeds(msg) {
 		return { posts: rockonfeedArray };
 	}
 	catch (e) {
-		console.log("error in getconvertedrockonfeeds: " + e);
+		logger.log("error","error in getconvertedrockonfeeds: " + e);
 		return { posts: [] };
 	}
 }
@@ -342,7 +338,7 @@ function GetInitialPosts(req, res) {
 			   		});
 
 			   		rockonres.on('error', function (err) {
-			   			console.log(err);
+			   			logger.log("error",err);
 			   			rockonfeeds = { posts: [] };
 			   		});
 
@@ -354,7 +350,7 @@ function GetInitialPosts(req, res) {
 
 			   	rockonreq.end();
 			   	if (fb_access_token) {
-			   		console.log('GetHome feeds called');
+			   		logger.log("info",'GetHome feeds called');
 			   		fbapi.getHomeFeeds(fb_access_token, res, function (feeds) {
 			   			fbfeeds = feeds;
 			   			feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token);
