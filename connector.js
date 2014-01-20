@@ -8,7 +8,6 @@ if (cluster.isMaster) {
 	});
 }
 else {
-	
 	var express = require('express')
   , fbapi = require('./facebook')
   , postcontroller = require('./postcontroller')
@@ -17,28 +16,28 @@ else {
   , app = express()
   , qs = require('qs')
   , domain = require('domain')
-  ,winston  = require('winston')
+  , winston = require('winston')
   , DigestStrategy = require('passport-http').DigestStrategy // http digest
   , FacebookStrategy = require('passport-facebook').Strategy;
 	// Setup middleware
 	var serverDomain = domain.create();
 	serverDomain.on('error', function (err) {
 		console.log("Server Domain Error: " + err);
-    });
-    if (app.get('env') == undefined) {
-        app.set('env', 'development');
-    }
-    var config = require('./config.json')[app.get('env')];
+	});
+	if (app.get('env') == undefined) {
+		app.set('env', 'development');
+	}
+	var config = require('./config.json')[app.get('env')];
 
-    app.configure(app.get('env'), function () {
-        console.log(app.get('env') + " environment started");
-        global.FACEBOOK_APP_ID = config.FACEBOOK_APP_ID;
-        global.FACEBOOK_APP_SECRET = config.FACEBOOK_APP_SECRET;
-        global.CONNECTOR_URL = config.CONNECTOR_URL;
-        global.CALLBACK_URL = config.CALLBACK_URL;
-        global.ROCKON_URL =config.ROCKON_URL;
-        global.ROCKON_PORT =config.ROCKON_PORT;
-    });
+	app.configure(app.get('env'), function () {
+		console.log(app.get('env') + " environment started");
+		global.FACEBOOK_APP_ID = config.FACEBOOK_APP_ID;
+		global.FACEBOOK_APP_SECRET = config.FACEBOOK_APP_SECRET;
+		global.CONNECTOR_URL = config.CONNECTOR_URL;
+		global.CALLBACK_URL = config.CALLBACK_URL;
+		global.ROCKON_URL = config.ROCKON_URL;
+		global.ROCKON_PORT = config.ROCKON_PORT;
+	});
 	app.use(express.static(__dirname));
 	app.use(express.bodyParser());
 	app.use(express.logger());
@@ -53,90 +52,90 @@ else {
 	app.post('/fbpostfromuser', function (req, res) {
 		// Check to ensure user has a valid access_token
 		//if (oauth.access_token) {
-		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+		postcontroller.GetAccessToken(req, res, function (req, res, fb_access_token) {
 			if (fb_access_token) {
 				// Call function that contains API call to post on Facebook (see facebook.js)
 
 				fbapi.postMessage(fb_access_token, req, res);
 			} else {
-				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error', "Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
 	});
-    app.post('/fbpostNotification', function (req, res) {
+	app.post('/fbpostNotification', function (req, res) {
 		// Check to ensure user has a valid access_token
-			// Call function that contains API call to post on Facebook (see facebook.js)
-        fbapi.postNotification(req, res);
+		// Call function that contains API call to post on Facebook (see facebook.js)
+		fbapi.postNotification(req, res);
 	});
 
 	app.get('/fbgetReplies', function (req, res) {
 		// Check to ensure user has a valid access_token
-		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+		postcontroller.GetAccessToken(req, res, function (req, res, fb_access_token) {
 			if (fb_access_token) {
 				fbapi.getReplies(fb_access_token, res, req);
 			} else {
-				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error', "Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
 	});
 	app.get('/fbgetLikes', function (req, res) {
 		// Check to ensure user has a valid access_token
-		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+		postcontroller.GetAccessToken(req, res, function (req, res, fb_access_token) {
 			if (fb_access_token) {
 				fbapi.getLikes(fb_access_token, res, req);
 			} else {
-				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error', "Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
 	});
 	app.post('/fbpostReplies', function (req, res) {
 		// Check to ensure user has a valid access_token
-		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+		postcontroller.GetAccessToken(req, res, function (req, res, fb_access_token) {
 			if (fb_access_token) {
 				fbapi.postReplies(fb_access_token, res, req);
 			} else {
-				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error', "Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
 	});
 	app.post('/fbpostLikes', function (req, res) {
 		// Check to ensure user has a valid access_token
-		postcontroller.GetAccessToken(req, res, function (req, res,fb_access_token) {
+		postcontroller.GetAccessToken(req, res, function (req, res, fb_access_token) {
 			if (fb_access_token) {
 				fbapi.postLikes(fb_access_token, res, req);
 			} else {
-				winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
+				winston.log('error', "Couldn't confirm that user was authenticated. Redirecting to /");
 				res.redirect('/');
 			}
 		});
 	});
 	app.get('/fbhome', function (req, res) {
-	    // Check to ensure user has a valid access_token
-	    if (oauth.access_token) {
-	        // Call function that contains API call to post on Facebook (see facebook.js)
-	        fbapi.getHomeFeeds(oauth.access_token, res);
-	    } else {
-	        winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
-	        res.redirect('/');
-	    }
+		// Check to ensure user has a valid access_token
+		if (oauth.access_token) {
+			// Call function that contains API call to post on Facebook (see facebook.js)
+			fbapi.getHomeFeeds(oauth.access_token, res);
+		} else {
+			winston.log('error', "Couldn't confirm that user was authenticated. Redirecting to /");
+			res.redirect('/');
+		}
 	});
 	app.get('/fbgetProfile', function (req, res) {
-	    // Check to ensure user has a valid access_token
-	    postcontroller.GetAccessToken(req, res, function (req, res, fb_access_token) {
-	        if (fb_access_token) {
-	            var callback = req.query.callback;
-	            // Call function that contains API call to post on Facebook (see facebook.js)
-	            var tokeninfo = { access_token: oauth.access_token, expires: oauth.expires };
-	            fbapi.getProfile(tokeninfo, res, callback);
-	        } else {
-	            winston.log('error',"Couldn't confirm that user was authenticated. Redirecting to /");
-	            res.redirect('/');
-	        }
-	    });
+		// Check to ensure user has a valid access_token
+		postcontroller.GetAccessToken(req, res, function (req, res, fb_access_token) {
+			if (fb_access_token) {
+				var callback = req.query.callback;
+				// Call function that contains API call to post on Facebook (see facebook.js)
+				var tokeninfo = { access_token: oauth.access_token, expires: oauth.expires };
+				fbapi.getProfile(tokeninfo, res, callback);
+			} else {
+				winston.log('error', "Couldn't confirm that user was authenticated. Redirecting to /");
+				res.redirect('/');
+			}
+		});
 	});
 	var loggedinuser = '';
 	// Use the FacebookStrategy within Passport.
@@ -155,15 +154,15 @@ else {
   		// To keep the example simple, the user's Facebook profile is returned to
   		// represent the logged-in user.  In a typical application, you would want
   		// to associate the Facebook account with a user record in your database,
-  	    // and return that user instead.
+  		// and return that user instead.
   		return done(null, profile);
   	});
   }
 ));
 	app.get('/auth/facebook',
-    function(req,res){
-     passport.authenticate('facebook', { callbackURL: "http://" + CONNECTOR_URL + "/callback/" + req.query.sid + "/" + req.query.sessionid, scope: ['create_note', 'email', 'export_stream', 'manage_pages', 'photo_upload', 'publish_actions', 'read_stream', 'publish_stream', 'read_stream', 'share_item', 'status_update', 'user_about_me', 'user_activities', 'user_friends', 'user_interests', 'user_likes', 'user_photos', 'user_questions', 'video_upload'] })(req,res);
-    //passport.authenticate('facebook', { scope: ['user_about_me', 'user_photos', 'email', 'publish_stream', 'read_stream', 'manage_pages'] }),
+    function (req, res) {
+    	passport.authenticate('facebook', { callbackURL: "http://" + CONNECTOR_URL + "/callback/" + req.query.sid + "/" + req.query.sessionid, scope: ['create_note', 'email', 'export_stream', 'manage_pages', 'photo_upload', 'publish_actions', 'read_stream', 'publish_stream', 'read_stream', 'share_item', 'status_update', 'user_about_me', 'user_activities', 'user_friends', 'user_interests', 'user_likes', 'user_photos', 'user_questions', 'video_upload'] })(req, res);
+    	//passport.authenticate('facebook', { scope: ['user_about_me', 'user_photos', 'email', 'publish_stream', 'read_stream', 'manage_pages'] }),
     });
 
 	// Passport session setup.
@@ -188,16 +187,16 @@ else {
 	// #############################################################################################################
 
 	function findByUsername(username, fn) {
-		winston.log('info','inside findusername');
+		winston.log('info', 'inside findusername');
 		for (var i = 0, len = users.length; i < len; i++) {
-			winston.log('info','inside for loop: ' + username);
+			winston.log('info', 'inside for loop: ' + username);
 			var user = users[i];
 			if (user.username === username) {
 				if (user.access_token != "") {
 					oauth.storeaccesstoken(user.access_token);
-					winston.log('info','found a valid token');
+					winston.log('info', 'found a valid token');
 				}
-				winston.log('info','username found');
+				winston.log('info', 'username found');
 				return fn(null, user);
 			}
 		}
@@ -208,7 +207,7 @@ else {
   new DigestStrategy(
     { qop: 'auth' },
     function (username, done) {
-    	winston.log('info','Findbyusername being called');
+    	winston.log('info', 'Findbyusername being called');
     	// Find the user by username. If there is no user with the given username
     	// set the user to `false` to indicate failure. Otherwise, return the
     	// user and user's password.
@@ -224,33 +223,33 @@ else {
     },
     function (params, done) // second callback
     {
-    	winston.log('info','second callback being called');
+    	winston.log('info', 'second callback being called');
     	// asynchronous validation, for effect...
     	process.nextTick(
             function () {
             	// check nonces in params here, if desired
-            	winston.log('info',params);
+            	winston.log('info', params);
             	return done(null, true);
             }
         );
     }
 ));
-    app.get('/digestauth',
+	app.get('/digestauth',
   passport.authenticate('digest', { session: true }),
   function (req, res) {
-      // The request will be redirected to Facebook for authentication, so this
-      // function will not be called.
-      if (oauth.access_token) {
-          res.redirect("/facebook.html");
-      }
-      else
-          res.redirect("/auth/facebook");
+  	// The request will be redirected to Facebook for authentication, so this
+  	// function will not be called.
+  	if (oauth.access_token) {
+  		res.redirect("/facebook.html");
+  	}
+  	else
+  		res.redirect("/auth/facebook");
   });
 
 	app.get('/logout', function (req, res) {
 		req.session.destroy(function (err) {
 			res.redirect('/'); //Inside a callback
- 		});
+		});
 		//  res.redirect('/');
 	});
 
@@ -262,23 +261,20 @@ else {
 	app.get('/appposttouser', oauth.getapplicationAuthtoken);
 
 	app.get('/callback/:sid/:session', function (req, res) {
-	    if (!req.params.sid) { 
-            res.redirect('http://'+rockonurl+ ":"+ rockonport);
-            return;
-        }
-	    oauth.callback(req, res, function (token) {
-	        var profile = fbapi.getProfile({ access_token: token, expires: "" }, res, "", function (profile) {
-	        
-	            postcontroller.SaveSocialNetworkInfo(req, res, profile.id, profile.name, "facebook", token, profile.link, "", function () {
-	                var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
-	                //res.redirect('/facebook.html');
-	                res.writeHead(200, { 'Content-Type': 'text/html' });
-	                res.end(output);
-	            });
-
-	        });
-
-	    });
+		if (!req.params.sid) {
+			res.redirect('http://' + rockonurl + ":" + rockonport);
+			return;
+		}
+		oauth.callback(req, res, function (token) {
+			var profile = fbapi.getProfile({ access_token: token, expires: "" }, res, "", function (profile) {
+				postcontroller.SaveSocialNetworkInfo(req, res, profile.id, profile.name, "facebook", token, profile.link, "", function () {
+					var output = '<html><head></head><body><script>this.window.close();</script> </body></html>';
+					//res.redirect('/facebook.html');
+					res.writeHead(200, { 'Content-Type': 'text/html' });
+					res.end(output);
+				});
+			});
+		});
 	});
 
 	app.listen(8180);
