@@ -9,8 +9,8 @@ if (cluster.isMaster) {
 }
 else {
     var fs = require('fs');
-    var privateKey = fs.readFileSync('./sslcert/rockon.key', 'utf8');
-    var certificate = fs.readFileSync('./sslcert/rockon.crt', 'utf8');
+    var certificate = fs.readFileSync('/etc/ssl/certs/ssl-cert-snakeoil.pem', 'utf8');
+    var privateKey = fs.readFileSync('/etc/ssl/private/ssl-cert-snakeoil.key', 'utf8');
     var credentials = {key:privateKey, cert:certificate};
 	var express = require('express')
   , fbapi = require('./facebook')
@@ -19,8 +19,9 @@ else {
   , passport = require('passport')
   , app = express()
   ,http= require('http')
+  ,https = require('https')
   , httpServer = http.createServer(app)
-  , httpsServer = http.createServer(credentials,app)
+  , httpsServer = https.createServer(credentials,app)
   , qs = require('qs')
   , domain = require('domain')
   , winston = require('winston')
