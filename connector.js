@@ -8,12 +8,16 @@ if (cluster.isMaster) {
 	});
 }
 else {
+    var fs = require('fs');
+    var privateKey = fs.readFileSync('');
+    var certificate = fs.readFileSync('');
+    var credentials = {key:privateKey, cert:certificate};
 	var express = require('express')
   , fbapi = require('./facebook')
   , postcontroller = require('./postcontroller')
   , oauth = require('./oauth')
   , passport = require('passport')
-  , app = express()
+  , app = express.createServer(credentials)
   , qs = require('qs')
   , domain = require('domain')
   , winston = require('winston')
