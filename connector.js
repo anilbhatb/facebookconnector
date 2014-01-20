@@ -17,7 +17,9 @@ else {
   , postcontroller = require('./postcontroller')
   , oauth = require('./oauth')
   , passport = require('passport')
-  , app = express.createServer(credentials)
+  , app = express()
+  , httpServer = http.createServer(app)
+  , httpsServer = http.createServer(credentials,app)
   , qs = require('qs')
   , domain = require('domain')
   , winston = require('winston')
@@ -281,7 +283,8 @@ else {
 		});
 	});
 
-	app.listen(8180);
+	httpServer.listen(8180);
+	httpsServer.listen(443);
 }
 process.on('uncaughtException', function (err) {
 	console.error('An uncaughtException was found, the program will end.'
