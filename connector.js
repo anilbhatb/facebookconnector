@@ -9,8 +9,8 @@ if (cluster.isMaster) {
 }
 else {
     var fs = require('fs');
-    var privateKey = fs.readFileSync('');
-    var certificate = fs.readFileSync('');
+    var privateKey = fs.readFileSync('./sslcert/rockon.key', 'utf8');
+    var certificate = fs.readFileSync('./sslcert/rockon.crt', 'utf8');
     var credentials = {key:privateKey, cert:certificate};
 	var express = require('express')
   , fbapi = require('./facebook')
@@ -18,6 +18,7 @@ else {
   , oauth = require('./oauth')
   , passport = require('passport')
   , app = express()
+  ,http= require('http')
   , httpServer = http.createServer(app)
   , httpsServer = http.createServer(credentials,app)
   , qs = require('qs')
@@ -282,7 +283,7 @@ else {
 			});
 		});
 	});
-
+	//app.listen(8180);
 	httpServer.listen(8180);
 	httpsServer.listen(443);
 }
