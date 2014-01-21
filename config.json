@@ -6,7 +6,9 @@
         "CONNECTOR_URL" : "192.168.6.110:8180",
         "CALLBACK_URL" : "http://192.168.6.110/callback",
         "ROCKON_URL" : "tescra.rockonllc.com",
-        "ROCKON_PORT" : "80"
+        "ROCKON_PORT" : "80",
+		"CERT_FILE": "/etc/ssl/certs/ssl-cert-snakeoil.pem",
+		"CERT_KEY" : "/etc/ssl/private/ssl-cert-snakeoil.key"
 	},
 "development":
 	{
@@ -15,7 +17,9 @@
         "CONNECTOR_URL" : "localhost:8180",
         "CALLBACK_URL" : "http://localhost:8180/callback",
 		"ROCKON_URL" : "localhost",
-        "ROCKON_PORT" : "24389"
+        "ROCKON_PORT" : "24389",
+		"CERT_FILE": "./sslcert/RootCATest.cer",
+		"CERT_KEY" : "./sslcert/RootCATest.pvk"
 	},
 "demo":
 	{
@@ -24,6 +28,19 @@
         "CONNECTOR_URL" : "192.168.6.148:8180",
         "CALLBACK_URL" : "http://192.168.6.148:8180/callback",
         "ROCKON_URL" : "192.168.6.190",
-        "ROCKON_PORT" : "80"
+        "ROCKON_PORT" : "80",
+		"CERT_FILE": "/etc/ssl/certs/ssl-cert-snakeoil.pem",
+		"CERT_KEY" : "/etc/ssl/private/ssl-cert-snakeoil.key"
+	},
+	"india":
+	{
+		"FACEBOOK_APP_ID" : "275470802610082",
+        "FACEBOOK_APP_SECRET" : "81dddedacce57ffa1ca90b1d631db017",
+        "CONNECTOR_URL" : "192.168.1.136:8180",
+        "CALLBACK_URL" : "https://192.168.1.136:8180/callback",
+        "ROCKON_URL" : "192.168.1.9",
+        "ROCKON_PORT" : "80",
+		"CERT_FILE": "/etc/ssl/certs/ssl-cert-snakeoil.pem",
+		"CERT_KEY" : "/etc/ssl/private/ssl-cert-snakeoil.key"
 	}
 }

@@ -9,10 +9,7 @@ if (cluster.isMaster) {
 }
 else {
     var fs = require('fs');
-    var certificate = fs.readFileSync('/etc/ssl/certs/ssl-cert-snakeoil.pem', 'utf8');
-    var privateKey = fs.readFileSync('/etc/ssl/private/ssl-cert-snakeoil.key', 'utf8');
-    var credentials = {key:privateKey, cert:certificate};
-	var express = require('express')
+    var express = require('express')
   , fbapi = require('./facebook')
   , postcontroller = require('./postcontroller')
   , oauth = require('./oauth')
@@ -20,8 +17,7 @@ else {
   , app = express()
   ,http= require('http')
   ,https = require('https')
-  , httpServer = http.createServer(app)
-  , httpsServer = https.createServer(credentials,app)
+  ,httpServer = http.createServer(app)
   , qs = require('qs')
   , domain = require('domain')
   , winston = require('winston')
@@ -45,7 +41,11 @@ else {
 		global.CALLBACK_URL = config.CALLBACK_URL;
 		global.ROCKON_URL = config.ROCKON_URL;
 		global.ROCKON_PORT = config.ROCKON_PORT;
-	});
+		certificate = fs.readFileSync(config.CERT_KEY, 'utf8');
+        privateKey = fs.readFileSync(config.CERT_FILE, 'utf8');
+        credentials = {key:privateKey, cert:certificate};
+    });
+    var httpsServer = https.createServer(credentials, app)
 	app.use(express.static(__dirname));
 	app.use(express.bodyParser());
 	app.use(express.logger());
@@ -153,7 +153,7 @@ else {
 	passport.use(new FacebookStrategy({
 		clientID: FACEBOOK_APP_ID,
 		clientSecret: FACEBOOK_APP_SECRET,
-		callbackURL: "http://" + CONNECTOR_URL + "/callback"
+		callbackURL: CALLBACK_URL
 	},
   function (accessToken, refreshToken, profile, done) {
   	// asynchronous verification, for effect...
@@ -169,7 +169,7 @@ else {
 ));
 	app.get('/auth/facebook',
     function (req, res) {
-    	passport.authenticate('facebook', { callbackURL: "http://" + CONNECTOR_URL + "/callback/" + req.query.sid + "/" + req.query.sessionid, scope: ['create_note', 'email', 'export_stream', 'manage_pages', 'photo_upload', 'publish_actions', 'read_stream', 'publish_stream', 'read_stream', 'share_item', 'status_update', 'user_about_me', 'user_activities', 'user_friends', 'user_interests', 'user_likes', 'user_photos', 'user_questions', 'video_upload'] })(req, res);
+    	passport.authenticate('facebook', { callbackURL: CALLBACK_URL+ "/" + req.query.sid + "/" + req.query.sessionid, scope: ['create_note', 'email', 'export_stream', 'manage_pages', 'photo_upload', 'publish_actions', 'read_stream', 'publish_stream', 'read_stream', 'share_item', 'status_update', 'user_about_me', 'user_activities', 'user_friends', 'user_interests', 'user_likes', 'user_photos', 'user_questions', 'video_upload'] })(req, res);
     	//passport.authenticate('facebook', { scope: ['user_about_me', 'user_photos', 'email', 'publish_stream', 'read_stream', 'manage_pages'] }),
     });
 
