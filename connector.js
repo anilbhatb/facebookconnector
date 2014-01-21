@@ -41,8 +41,8 @@ else {
 		global.CALLBACK_URL = config.CALLBACK_URL;
 		global.ROCKON_URL = config.ROCKON_URL;
 		global.ROCKON_PORT = config.ROCKON_PORT;
-		certificate = fs.readFileSync(config.CERT_KEY, 'utf8');
-        privateKey = fs.readFileSync(config.CERT_FILE, 'utf8');
+		privateKey = fs.readFileSync(config.CERT_KEY, 'utf8');
+		certificate = fs.readFileSync(config.CERT_FILE, 'utf8');
         credentials = {key:privateKey, cert:certificate};
     });
     var httpsServer = https.createServer(credentials, app)
