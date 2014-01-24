@@ -18,10 +18,10 @@
         "CALLBACK_URL" : "http://localhost:8180/callback",
 		"ROCKON_URL" : "localhost",
         "ROCKON_PORT" : "24389",
-		"CERT_FILE": "./sslcert/RootCATest.cer",
-		"CERT_KEY" : "./sslcert/RootCATest.pvk"
+		"CERT_FILE": "./sslcert/vo79097_cert.pem",
+		"CERT_KEY" : "./sslcert/vo79097_privatekey.pem"
 	},
-"demo":
+ "demo":
 	{
 		"FACEBOOK_APP_ID" : "363685873749093",
         "FACEBOOK_APP_SECRET" : "84895681852dc4a96f23345fd4d855b0",
