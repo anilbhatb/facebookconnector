@@ -1,4 +1,4 @@
-var http = require('http')
+var http = require('https')
         , fbapi = require('./facebook')
     , utils = require('util')
 	, moment = require('moment')
@@ -10,6 +10,7 @@ var logger = new (winston.Logger)({
       new (winston.transports.File)({ filename: 'connectorpost.log' })
 	]
 });
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 logger.log('info', 'logger for post controller working');
 //winston.add(winston.transports.File, { filename: 'connectorpost.log' });
 ////winston.remove(winston.transports.Console);
@@ -19,12 +20,13 @@ function GetAccessToken(req, res, fun) {
 	var sid = req.query.sid == undefined ? req.body.sid : req.query.sid;
 	var sessionid = req.query.sessionid == undefined ? req.body.sessionid : req.query.sessionid;
 	logger.log("info", "GetAccessToken sid:" + sid + "sessionid:" + sessionid);
-
+console.log(ROCKON_URL + ROCKON_PORT);
 	var options = {
 		host: ROCKON_URL,
 		port: ROCKON_PORT,
 		path: '/SocialNetwork/GetAccessToken',
 		method: 'POST',
+		rejectUnauthorized:false,
 		headers: {
 			'Content-Type': 'application/json; charset=utf-8',
 			'dataType': "json",
@@ -47,10 +49,12 @@ function GetAccessToken(req, res, fun) {
 		});
 		rockonres.on('end', function () {
 			if (socialInfo == "" || socialInfo == null) {
+				
 				logger.log("error", "null returned sid:" + sid);
 				fun(req, res);
 			}
 			else {
+				console.log(socialInfo);
 				socialInfo = JSON.parse(socialInfo);
 				if (socialInfo.SocialNetworks) {
 					logger.log("info", 'socialInfo.access_token' + socialInfo.SocialNetworks[0].TokenKey);
@@ -84,6 +88,7 @@ function SaveSocialNetworkInfo(req, res, userid, userName, networkName, tokenkey
 		port: ROCKON_PORT,
 		path: '/SocialNetwork/SaveSocialNetworkInfo',
 		method: 'POST',
+		rejectUnauthorized:false,
 		headers: {
 			'Content-Type': 'application/json; charset=utf-8',
 			'dataType': "json",
@@ -182,6 +187,7 @@ function GetPostsOnScroll(req, res) {
 		   		host: ROCKON_URL,
 		   		port: ROCKON_PORT,
 		   		path: '/Post/GetPostsOnScroll',
+		   		rejectUnauthorized:false,
 		   		//data: '{"id": "2","token": "sdsd"}',
 		   		method: 'POST',
 		   		headers: {
@@ -311,7 +317,7 @@ function convertrockonfeeds(msg) {
 }
 function GetInitialPosts(req, res) {
 	var fbfeeds = '', rockonfeeds = '';
-
+ console.log('init getinitialposts');
 	GetAccessToken(req, res,
 			   function (req, res, fb_access_token) {
 			   	var sid = req.query.sid;
@@ -343,6 +349,7 @@ function GetInitialPosts(req, res) {
 			   		});
 
 			   		rockonres.on('end', function () {
+
 			   			rockonfeeds = convertrockonfeeds(msg);
 			   			feedGetComplete(fbfeeds, rockonfeeds, req, res, fb_access_token);
 			   		});
