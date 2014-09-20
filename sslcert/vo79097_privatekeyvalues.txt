@@ -1,0 +1,32 @@
+Prime number (Bitsize: 1024): p 
+============================================================= hex ==== 
+fc94eeeb1ea0b1842ca2b9ca48b5f5af28b3b0d072dfc57b95f651f9ee2559f8ff4a9cb972bf865ff81b2f3048b3d3fec9f0309d381cb331babc39d8292168ec7eac0fc497dd8141284c8bed8692c763ea8f2c83e9894177d4b0c53e73299f0e5d2d9437e1184a6e3bdb4cb34f9e32a5b9eee5ecc77954c568f64bb99f2e1af7
+
+Prime number (Bitsize: 1024): q 
+============================================================= hex ==== 
+e091007df97333bd771ce74cf141db4bb1f0c75317b2e8adf2e3b749fa6f05f93493280b244d05bd4e1f7cc245402652eda370e12f9699cb97f9c92869543cb254ac61ebe1a43dee6827e91f719476710b218d76f6afc21d2c06f79c7ac10bd7a230f48318b53aa9006b9dad13b6d78c9962e901bb8d0bf1deadabbac4da0f35
+
+Modulus (Bitsize: 2048): n=p*q 
+============================================================= hex ==== 
+dd9161e558d0237cc6de615eaf3c26b98e9f92b4c444505d8fdcd0258ec48ea50ecb9013a119edb4871c89c9b5fc19f6bba324dfdc6c1a751910dd00409a7cdf1d3888575d6b8d095af541bdf1649d574902bd26d2157f042970bf75171dcc7ceb5048f3f7b9ee54fc044fffdcf42959e9bae385872089571818fe4befaec065f2892b74bbf25929fa6937dcb744e21956bb1c4c1945606aa3e337750f8cf305b080b547dd479d7056343e5193c45fbd9a28d212bd5e35039e9a5cf4e9635d9c0addf6a659f8eb3fd9631acb80069810efac9e902177ef5ed8cd03ebbca268be25a8a9b9ca789770d463baafd127993b3f66bc39c52ba0fea1cbfc1fba760e23
+
+Public exponent: e 
+============================================================= hex ==== 
+10001
+
+Private exponent: d=(e^-1) mod phi 
+============================================================= hex ==== 
+d915bf57e96b8cc98d43871d310dfb5724e13de934bf460a5590e0b35bad43a17edc7d9e6de2ac9e8b1eaff5dd0353210678f3010ec3302cf8d127e73e64dee1ef8c5b31560bb154b034ca23e326546e97cf422a8dfd97c4292219c40c511af06dd1ec9874684c962191cc1c018d8c125749cff01d1408dc37750d7ab32c81bdcda2bbcb1fd42db63f6acb99558a33b2ad9bb55d336aebf1941eab8e6703777ec9480fe45ee432b63259b14abeb48f1a64170e50d79aaad8b874d499ecaddeee0eff17e59bf6c74a715ab933f38627afc9df3df7eac44e5b2606bae941d08f05ff85f3cc1600f6eaa779dbb36703bd36ddb0274aec54f924afb5b3d577ca1569
+
+Chinese Remainder Theorem (CRT) exponent 1: dP=d mod (p-1) 
+============================================================= hex ==== 
+988ddfabf4c8bbcf082294b27fae1f20d72588d2adbf4808b7ef995daa1fb732f4067d98689d132d1dae559705225015a0a448c87c9ea1009537a07c55834f5b1fbb0e9effd6927de7382c7f9efb4220b0081fabe0bebce3027c6df5a51aeb6d828bc7ece43086ac03cd158b6bb83200f4c73cea0124e035878ad2fbdf0fbacb
+
+Chinese Remainder Theorem (CRT) exponent 2: dQ=d mod (q-1) 
+============================================================= hex ==== 
+6e941828efff6137e7824d071f396d91ad7241c451c4203d1f80300df68a5ae7a692dbc1f8c3109371f7a1484c2f556fba62a3bfcede1aa71d13bb90f1a4b02aa3f52a56ab8a639094ab2a68f855c1a8d27158267f3c769a44c6bd80c9156c0e676831cea808fd74a0a75d420f961637be83ecf69472d4b1ea139c9f60357c0d
+
+Chinese Remainder Theorem (CRT) coefficient: qInv=(q^-1) mod p 
+============================================================= hex ==== 
+bccf6d0ce18070baf463d9e39ffc8b05a0e229fa49b0d94ab9bc8f316298c3f887adadf323f3ca463b693cfd4d03353de068e3e10c5c1c886b1934ecfa28b78b4281fcab8207c9576f12534b9326cda498d269b0a183b9d5e6d89595f678b39e06b5cbbc224b412b34c707fec6bc9302f12da50e5bd69ffd686a26c5e20391a5
+
