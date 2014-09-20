@@ -1,0 +1,72 @@
+<html>
+<head>
+  <title>Facebook: Post on Facebook Example</title>
+  <style type="text/css">
+    body{margin: 0; padding: 10px; font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; }
+    h1{padding: 10px 0; font-size: 18px; font-weight: normal; color: #444; border-bottom: 1px solid #ccc; margin: 0 0 20px;}
+    h2{padding: 10px; font-size:14px; font-weight:normal; color:rgb(45,68,134);}
+    button{padding:20px; font-size:16px; background: rgb(45,68,134);color:#eee;border:none;}
+  </style>
+ <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  
+  <script type="text/javascript">
+  
+    var url = '';
+  	var w = '';
+      $(document).ready(function() {
+       // $.get('/login', function(data) {
+         
+       //   url = 'https://www.facebook.com/dialog/oauth?client_id=236299956516217&redirect_uri=http%3A%2F%google&state=10179875651374459//00&display=popup&scope=publish_stream';
+    //    }); 
+      });
+  
+     var interval = window.setInterval((function() {
+        if (w.closed) {
+          window.clearInterval(interval);       
+          
+          $('#fbpost').show();
+	 		    $('#fb-login').hide();
+          $('h2').hide();
+        }
+  }), 1000);
+  function digestauthenticate() {
+      alert('authenticate using digest');
+      var dat = JSON.stringify({
+          'id': '2', 'token': 'sdjsd'
+      });
+
+      $.ajax({
+          type: "POST",
+          url: "/digestauth",
+          data: dat,
+          auth: {
+    user: 'john',
+    pass: 'pass',
+    sendImmediately: false
+  },
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function (response) {
+              alert("success");
+              alert(response.body);
+              // What goes here?
+          },
+          failure: function (msg) {
+              alert(msg);
+              //error message
+          }
+      });
+  };
+      
+  </script>
+
+</head>
+<body>
+<h1 id="header">Facebook: <strong>Post</strong></h1>
+<div style="text-align:center;"><button id="digest-login" onclick="location.href = 'http://localhost:8180/digestauth';">LOGIN TO Rockon</button>
+
+</div>
+
+
+</body>
+</html>

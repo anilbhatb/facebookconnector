@@ -1,0 +1,11 @@
+{
+  "name": "post-on-facebook",
+  "version": "0.0.1",
+  "description": "A sample code project using Facebook's API to post a status",
+  "dependencies": {
+  	"express": "*",
+  	"qs": "*",
+  	"request": "*"
+   },
+  "engine": "node 0.6.x"
+}
