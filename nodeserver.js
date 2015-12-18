@@ -1,3 +1,4 @@
+test
 var cluster = require('cluster');
 if (cluster.isMaster) {
 	var worker = cluster.fork().process;
